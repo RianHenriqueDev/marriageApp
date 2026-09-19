@@ -1,107 +1,74 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, KeyRound, ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { loginAdmin } from "@/app/admin/actions";
-import { retroSound } from "@/lib/retroAudio";
+import { Lock } from "lucide-react";
 
 export function AdminLoginForm() {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (!password.trim()) {
-      setError("Insira a senha de Game Master!");
-      retroSound.playDodge();
-      return;
-    }
-
     setLoading(true);
+    setError(null);
+
     const res = await loginAdmin(password);
     setLoading(false);
 
-    if (res.success) {
-      retroSound.playVictory();
-      window.location.reload();
+    if (!res.success) {
+      setError(res.error || "Senha incorreta.");
     } else {
-      retroSound.playDodge();
-      setError(res.error || "Senha incorreta!");
+      window.location.reload();
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#070b12] text-[#f6eed9] flex flex-col items-center justify-center p-4 font-pixel select-none relative overflow-hidden">
-      {/* Background Retrô */}
-      <div className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-[#03060c] via-[#0d1527] to-[#1a263d]">
-        <div className="absolute top-12 left-1/4 w-2 h-2 bg-yellow-200 animate-pixel-blink" />
-        <div className="absolute top-24 right-1/4 w-2 h-2 bg-yellow-300 animate-pixel-blink" />
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#122815] border-t-4 border-black" />
-      </div>
+    <div className="min-h-screen bg-canvas-base flex items-center justify-center p-4">
+      <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-3xl max-w-sm w-full p-8 space-y-6 text-center animate-fade-up">
+        <div className="w-12 h-12 rounded-full bg-canvas-subtle flex items-center justify-center mx-auto text-accent-olive border border-border-hairline">
+          <Lock className="w-5 h-5" strokeWidth={1.5} />
+        </div>
 
-      <div className="max-w-md w-full bg-[#161922] border-4 border-black pixel-shadow-lg rounded-2xl p-6 sm:p-8 space-y-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-[9px] text-stone-400 hover:text-gold-400 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          [ RETORNAR AO INÍCIO ]
-        </Link>
-
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 bg-black/60 border-2 border-gold-400 rounded-xl flex items-center justify-center mx-auto text-gold-400 shadow-[0_0_15px_rgba(215,170,95,0.4)]">
-            <Shield className="w-7 h-7" />
-          </div>
-          <h1 className="text-sm sm:text-base font-extrabold text-gold-400 tracking-wider">
-            GAME MASTER ACCESS
-          </h1>
-          <p className="text-[9px] text-stone-400 font-sans">
-            Área restrita aos noivos Jeniffer & Rian. Autenticação obrigatória.
+        <div className="space-y-1">
+          <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-content-muted block">
+            Painel dos Noivos
+          </span>
+          <h2 className="font-serif text-2xl font-normal text-content-primary">
+            Jeniffer & Rian
+          </h2>
+          <p className="text-xs text-content-secondary pt-1">
+            Digite a senha de acesso para gerenciar a lista de convidados:
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <div>
-            <label className="block text-gold-300 text-[9px] font-bold mb-1.5 flex items-center gap-1.5">
-              <KeyRound className="w-3.5 h-3.5" />
-              DIGITE A MASTER PASSWORD:
-            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                setError("");
+                setError(null);
               }}
-              placeholder="••••••••••••"
-              autoFocus
-              className="w-full px-3 py-2.5 bg-black border-2 border-gold-400 text-gold-300 text-[10px] rounded focus:outline-none placeholder:text-stone-700 font-pixel tracking-widest"
+              placeholder="Digite a senha..."
+              className="w-full px-4 py-3 rounded-xl bg-canvas-subtle/70 border border-border-hairline text-xs font-sans text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all"
             />
+            {error && (
+              <p className="text-xs text-red-600 mt-1 font-sans">{error}</p>
+            )}
           </div>
-
-          {error && (
-            <div className="p-2.5 bg-red-950/80 border-2 border-red-600 text-red-300 text-[8px] rounded animate-bounce">
-              ⚠️ {error}
-            </div>
-          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#c79038] hover:bg-[#d7aa5f] text-black border-4 border-black pixel-shadow text-[10px] font-extrabold tracking-wider flex items-center justify-center gap-2 cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none"
+            className="w-full py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial"
           >
-            <span>{loading ? "VERIFICANDO..." : "DESBLOQUEAR CONSOLE"}</span>
+            {loading ? "Verificando..." : "Entrar no Painel"}
           </button>
         </form>
-
-        <div className="text-center text-[8px] text-stone-500 pt-2 border-t border-stone-800">
-          QUEST LAUNCH • 12/12/2026 • 10:30H
-        </div>
       </div>
-    </main>
+    </div>
   );
 }

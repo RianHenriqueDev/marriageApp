@@ -4,8 +4,8 @@ import { useState } from "react";
 import {
   Users,
   CheckCircle2,
-  XCircle,
   Clock,
+  XCircle,
   Copy,
   Check,
   Trash2,
@@ -18,8 +18,7 @@ import {
 import { deleteGuest } from "@/app/admin/actions";
 import { InviteImageModal } from "./InviteImageModal";
 import { GuestFormModal } from "./GuestFormModal";
-import { Guest } from "@prisma/client";
-import { retroSound } from "@/lib/retroAudio";
+import { Guest, AttendanceSelection, RsvpState } from "@prisma/client";
 
 interface AdminDashboardProps {
   initialGuests: Guest[];
@@ -28,8 +27,8 @@ interface AdminDashboardProps {
 export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterCategory, setFilterCategory] = useState("ALL");
-  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [filterAttendance, setFilterAttendance] = useState<string>("ALL");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   // Modais
@@ -37,38 +36,37 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   const [formModalGuest, setFormModalGuest] = useState<Guest | null>(null);
   const [isNewGuestOpen, setIsNewGuestOpen] = useState(false);
 
-  // Cálculos de métricas do RPG
+  // Métricas
   const totalGuests = guests.length;
-  const acceptedGuests = guests.filter((g) => g.status === "ACCEPTED");
-  const declinedGuests = guests.filter((g) => g.status === "DECLINED");
-  const pendingGuests = guests.filter((g) => g.status === "PENDING");
+  const confirmedGuestsList = guests.filter((g) => g.status === RsvpState.CONFIRMED);
+  const pendingGuestsList = guests.filter((g) => g.status === RsvpState.PENDING);
+  const declinedGuestsList = guests.filter((g) => g.status === RsvpState.DECLINED);
 
-  const totalConfirmedPeople = acceptedGuests.reduce(
-    (acc, g) => acc + 1 + (g.confirmedPlusOnes || 0),
+  const totalConfirmedHeadcount = confirmedGuestsList.reduce(
+    (acc, g) => acc + (g.confirmedGuests || 1),
     0
   );
 
+  const countBoth = confirmedGuestsList.filter((g) => g.attendance === AttendanceSelection.BOTH).length;
+  const countCeremony = confirmedGuestsList.filter((g) => g.attendance === AttendanceSelection.ONLY_CEREMONY).length;
+  const countRestaurant = confirmedGuestsList.filter((g) => g.attendance === AttendanceSelection.ONLY_RESTAURANT).length;
+
   const copyInviteLink = (guest: Guest) => {
-    retroSound.playSelect();
-    const path = guest.flowType === "GAMEPLAY" ? "c" : "convite";
-    const url = `${window.location.origin}/${path}/${guest.token}`;
+    const url = `${window.location.origin}/c/${guest.token}`;
     navigator.clipboard.writeText(url);
     setCopiedToken(guest.token);
     setTimeout(() => setCopiedToken(null), 2500);
   };
 
   const openWhatsAppBroadcast = (guest: Guest) => {
-    retroSound.playSelect();
-    const path = guest.flowType === "GAMEPLAY" ? "c" : "convite";
-    const url = `${window.location.origin}/${path}/${guest.token}`;
+    const url = `${window.location.origin}/c/${guest.token}`;
     const text = encodeURIComponent(
-      `Olá ${guest.name}! ⚔️💖\nVocê foi convocado(a) para a nossa Wedding Quest (Casamento de Jeniffer & Rian em 12/12/2026 às 10:30h)!\n\nAcesse o link exclusivo para confirmar sua presença e escolher suas opções na party:\n${url}\n\nEsperamos por você!`
+      `Olá, ${guest.name}! ✨\nCom muita alegria, convidamos você para celebrar nosso casamento no dia 12 de Dezembro de 2026.\n\nAcesse o link abaixo para visualizar todos os detalhes e confirmar sua presença:\n${url}\n\nCom carinho, Jeniffer & Rian.`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
   const handleGuestSaved = (savedGuest: Guest, isEdit: boolean) => {
-    retroSound.playVictory();
     if (isEdit) {
       setGuests((prev) =>
         prev.map((g) => (g.id === savedGuest.id ? savedGuest : g))
@@ -79,8 +77,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    retroSound.playDodge();
-    if (confirm(`Deseja realmente remover o aventureiro "${name}" da guilda?`)) {
+    if (confirm(`Deseja realmente remover "${name}" da lista de convidados?`)) {
       const res = await deleteGuest(id);
       if (res.success) {
         setGuests((prev) => prev.filter((g) => g.id !== id));
@@ -88,286 +85,257 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     }
   };
 
-  // Filtragem dos convidados
   const filteredGuests = guests.filter((g) => {
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      filterCategory === "ALL" || g.category === filterCategory;
     const matchesStatus = filterStatus === "ALL" || g.status === filterStatus;
-    return matchesSearch && matchesCategory && matchesStatus;
+    const matchesAttendance = filterAttendance === "ALL" || g.attendance === filterAttendance;
+    return matchesSearch && matchesStatus && matchesAttendance;
   });
 
-  // Contadores de Presença por Fase
-  const bothCount = acceptedGuests.filter((g) => g.attendance === "BOTH").length;
-  const ceremonyCount = acceptedGuests.filter((g) => g.attendance === "ONLY_CEREMONY").length;
-  const dinnerCount = acceptedGuests.filter((g) => g.attendance === "ONLY_DINNER").length;
-
   return (
-    <div className="space-y-6">
-      {/* HUD DE RECURSOS (MÉTRICAS RETRÔ) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Total de Aventureiros */}
-        <div className="bg-[#1a1c23] border-4 border-black pixel-shadow p-4 rounded-xl">
-          <div className="flex items-center justify-between text-[#895525] text-[9px]">
-            <span>TOTAL AVENTUREIROS</span>
-            <Users className="w-4 h-4 text-gold-400" />
+    <div className="space-y-8 animate-fade-up">
+      {/* CARDS DE MÉTRICAS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Cadastrado */}
+        <div className="bg-surface-card border border-border-hairline shadow-editorial p-5 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-content-secondary text-xs">
+            <span className="font-sans uppercase tracking-[0.15em]">Convites Emitidos</span>
+            <Users className="w-4 h-4 text-accent-olive" strokeWidth={1.5} />
           </div>
-          <p className="text-2xl font-bold text-gold-400 mt-2">
+          <p className="font-serif text-3xl font-normal text-content-primary">
             {totalGuests}
           </p>
-          <span className="text-[8px] text-stone-400">Cadastrados na Guilda</span>
-        </div>
-
-        {/* Party Confirmada */}
-        <div className="bg-[#1a1c23] border-4 border-black pixel-shadow p-4 rounded-xl">
-          <div className="flex items-center justify-between text-emerald-400 text-[9px]">
-            <span>PARTY CONFIRMADA</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          </div>
-          <p className="text-2xl font-bold text-emerald-400 mt-2">
-            {totalConfirmedPeople}
-          </p>
-          <div className="text-[8px] text-stone-300 mt-1 flex flex-col gap-0.5">
-            <span>⚔️ Cartório + Almoço: {bothCount}</span>
-            <span>📜 Só Cartório: {ceremonyCount} | 🥩 Só JP Steakhouse: {dinnerCount}</span>
-          </div>
-        </div>
-
-        {/* Quests Pendentes */}
-        <div className="bg-[#1a1c23] border-4 border-black pixel-shadow p-4 rounded-xl">
-          <div className="flex items-center justify-between text-amber-400 text-[9px]">
-            <span>QUESTS PENDENTES</span>
-            <Clock className="w-4 h-4 text-amber-500" />
-          </div>
-          <p className="text-2xl font-bold text-amber-400 mt-2">
-            {pendingGuests.length}
-          </p>
-          <span className="text-[8px] text-stone-400">
-            {totalGuests > 0 ? Math.round((pendingGuests.length / totalGuests) * 100) : 0}% da guilda
+          <span className="text-[11px] text-content-muted block">
+            Famílias e convidados cadastrados
           </span>
         </div>
 
-        {/* Baixas / Recusas */}
-        <div className="bg-[#1a1c23] border-4 border-black pixel-shadow p-4 rounded-xl">
-          <div className="flex items-center justify-between text-red-400 text-[9px]">
-            <span>BAIXAS / RECUSAS</span>
-            <XCircle className="w-4 h-4 text-red-500" />
+        {/* Total Confirmado */}
+        <div className="bg-surface-card border border-border-hairline shadow-editorial p-5 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-accent-olive text-xs">
+            <span className="font-sans uppercase tracking-[0.15em] font-medium">Pessoas Confirmadas</span>
+            <CheckCircle2 className="w-4 h-4 text-accent-olive" strokeWidth={1.5} />
           </div>
-          <p className="text-2xl font-bold text-red-400 mt-2">
-            {declinedGuests.length}
+          <p className="font-serif text-3xl font-normal text-accent-olive">
+            {totalConfirmedHeadcount}
           </p>
-          <span className="text-[8px] text-stone-400">Abandonaram a quest</span>
+          <div className="text-[11px] text-content-secondary space-y-0.5 pt-0.5">
+            <div>Cerimônia + Almoço: {countBoth}</div>
+            <div>Só Cartório: {countCeremony} | Só Almoço: {countRestaurant}</div>
+          </div>
+        </div>
+
+        {/* Pendentes */}
+        <div className="bg-surface-card border border-border-hairline shadow-editorial p-5 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-content-secondary text-xs">
+            <span className="font-sans uppercase tracking-[0.15em]">Respostas Pendentes</span>
+            <Clock className="w-4 h-4 text-accent-gold" strokeWidth={1.5} />
+          </div>
+          <p className="font-serif text-3xl font-normal text-content-primary">
+            {pendingGuestsList.length}
+          </p>
+          <span className="text-[11px] text-content-muted block">
+            {totalGuests > 0 ? Math.round((pendingGuestsList.length / totalGuests) * 100) : 0}% aguardando confirmação
+          </span>
+        </div>
+
+        {/* Não Comparecerão */}
+        <div className="bg-surface-card border border-border-hairline shadow-editorial p-5 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-content-secondary text-xs">
+            <span className="font-sans uppercase tracking-[0.15em]">Ausentes</span>
+            <XCircle className="w-4 h-4 text-content-muted" strokeWidth={1.5} />
+          </div>
+          <p className="font-serif text-3xl font-normal text-content-secondary">
+            {declinedGuestsList.length}
+          </p>
+          <span className="text-[11px] text-content-muted block">
+            Não poderão comparecer
+          </span>
         </div>
       </div>
 
-      {/* GUILD MEMBERS: TABELA & AÇÕES */}
-      <div className="bg-[#161922] border-4 border-black pixel-shadow-lg rounded-2xl p-4 sm:p-5 space-y-4">
-        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between border-b-2 border-black pb-3">
+      {/* TABELA DE GESTÃO DE CONVIDADOS */}
+      <div className="bg-surface-card border border-border-hairline shadow-editorial rounded-3xl p-6 space-y-5">
+        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between border-b border-border-hairline pb-4">
           {/* Busca por Nome */}
           <div className="relative flex-1">
-            <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-content-muted absolute left-3.5 top-1/2 -translate-y-1/2" strokeWidth={1.5} />
             <input
               type="text"
-              placeholder="Buscar aventureiro pelo nome..."
+              placeholder="Buscar convidado pelo nome..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-black border-2 border-stone-700 text-gold-300 text-[9px] rounded focus:outline-none focus:border-gold-400"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-canvas-subtle/70 border border-border-hairline text-xs font-sans text-content-primary placeholder:text-content-muted focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all"
             />
           </div>
 
-          {/* Filtros e Spawn New Player */}
-          <div className="flex flex-wrap gap-2">
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-2.5 py-2 bg-black border-2 border-stone-700 text-stone-300 text-[8px] rounded focus:outline-none"
-            >
-              <option value="ALL">TODAS CATEGORIAS</option>
-              <option value="PADRINHOS">PADRINHOS</option>
-              <option value="FAMILIA_IDOSOS">FAMÍLIA / IDOSOS</option>
-              <option value="AMIGOS">AMIGOS</option>
-              <option value="GERAL">GERAL</option>
-            </select>
-
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Filtro de Status */}
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-2.5 py-2 bg-black border-2 border-stone-700 text-stone-300 text-[8px] rounded focus:outline-none"
+              className="px-3 py-2 rounded-full bg-canvas-subtle/70 border border-border-hairline text-xs font-sans text-content-secondary focus:outline-none focus:border-accent-olive"
             >
-              <option value="ALL">TODOS STATUS</option>
-              <option value="ACCEPTED">CONFIRMADOS (HP CHEIO)</option>
-              <option value="PENDING">PENDENTES</option>
-              <option value="DECLINED">RECUSADOS</option>
+              <option value="ALL">Todos os Status</option>
+              <option value={RsvpState.CONFIRMED}>Confirmados</option>
+              <option value={RsvpState.PENDING}>Pendentes</option>
+              <option value={RsvpState.DECLINED}>Ausentes</option>
             </select>
 
+            {/* Filtro de Fases */}
+            <select
+              value={filterAttendance}
+              onChange={(e) => setFilterAttendance(e.target.value)}
+              className="px-3 py-2 rounded-full bg-canvas-subtle/70 border border-border-hairline text-xs font-sans text-content-secondary focus:outline-none focus:border-accent-olive"
+            >
+              <option value="ALL">Todas as Fases</option>
+              <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
+              <option value={AttendanceSelection.ONLY_CEREMONY}>Só Cerimônia</option>
+              <option value={AttendanceSelection.ONLY_RESTAURANT}>Só Almoço</option>
+            </select>
+
+            {/* Botão Novo Convidado */}
             <button
               onClick={() => {
-                retroSound.playSelect();
+                setFormModalGuest(null);
                 setIsNewGuestOpen(true);
               }}
-              className="px-3.5 py-2 bg-gold-500 hover:bg-gold-400 text-black border-2 border-black pixel-shadow text-[9px] font-bold flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 whitespace-nowrap"
+              className="px-4 py-2 rounded-full bg-accent-olive text-white text-xs font-sans font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial flex items-center gap-1.5"
             >
-              <Plus className="w-3.5 h-3.5" />
-              SPAWN NEW PLAYER
+              <Plus className="w-4 h-4" strokeWidth={1.5} />
+              <span>Novo Convidado</span>
             </button>
           </div>
         </div>
 
-        {/* Tabela de Membros da Guilda */}
-        <div className="overflow-x-auto rounded-lg border-2 border-black">
-          <table className="w-full text-left text-[9px]">
-            <thead className="bg-[#11141a] text-gold-400 border-b-2 border-black">
+        {/* Tabela */}
+        <div className="overflow-x-auto rounded-2xl border border-border-hairline">
+          <table className="w-full text-left text-xs font-sans">
+            <thead className="bg-canvas-subtle/70 text-content-secondary border-b border-border-hairline">
               <tr>
-                <th className="px-3 py-2.5">AVENTUREIRO</th>
-                <th className="px-2.5 py-2.5">CLASSE / FLUXO</th>
-                <th className="px-2.5 py-2.5">STATUS HP</th>
-                <th className="px-2 py-2.5 text-center">PARTY</th>
-                <th className="px-3 py-2.5 text-right">COMANDOS</th>
+                <th className="px-4 py-3 font-medium">Nome do Convidado</th>
+                <th className="px-3 py-3 font-medium">Status RSVP</th>
+                <th className="px-3 py-3 font-medium">Participação</th>
+                <th className="px-3 py-3 text-center font-medium">Confirmados</th>
+                <th className="px-4 py-3 text-right font-medium">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y-2 divide-black bg-[#1a1c23]">
+            <tbody className="divide-y divide-border-hairline/60 bg-surface-card">
               {filteredGuests.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-stone-500 text-[9px]">
-                    Nenhum aventureiro encontrado na guilda.
+                  <td colSpan={5} className="px-4 py-8 text-center text-content-muted">
+                    Nenhum convidado encontrado.
                   </td>
                 </tr>
               ) : (
                 filteredGuests.map((guest) => {
                   const isCopied = copiedToken === guest.token;
                   return (
-                    <tr key={guest.id} className="hover:bg-[#252836] transition-colors">
-                      <td className="px-3 py-3">
-                        <div className="font-bold text-white flex items-center gap-1.5">
-                          <span>{guest.gender === "F" ? "🧙‍♀️" : "⚔️"}</span>
-                          <span>{guest.name}</span>
+                    <tr key={guest.id} className="hover:bg-canvas-subtle/40 transition-colors">
+                      <td className="px-4 py-3.5">
+                        <div className="font-medium text-content-primary">
+                          {guest.name}
                         </div>
-                        {guest.scriptId && (
-                          <div className="text-[8px] text-gold-400">
-                            Roteiro: [{guest.scriptId}]
+                        {guest.phone && (
+                          <div className="text-[11px] text-content-muted">
+                            {guest.phone}
                           </div>
                         )}
-                        {guest.customNote && (
-                          <div className="text-[8px] text-stone-400 truncate max-w-xs italic">
-                            &ldquo;{guest.customNote}&rdquo;
+                        {guest.guestMessage && (
+                          <div className="text-[11px] text-accent-olive italic truncate max-w-xs mt-0.5">
+                            &ldquo;{guest.guestMessage}&rdquo;
                           </div>
                         )}
                       </td>
 
-                      <td className="px-2.5 py-3">
-                        <div className="flex flex-col gap-1 items-start">
-                          <span
-                            className={`text-[8px] font-bold px-1.5 py-0.5 rounded border border-black ${
-                              guest.flowType === "GAMEPLAY"
-                                ? "bg-purple-900/80 text-purple-300"
-                                : "bg-blue-900/80 text-blue-300"
-                            }`}
-                          >
-                            {guest.flowType}
-                          </span>
-                          <span className="text-[8px] text-stone-400">
-                            {guest.category}
-                          </span>
-                        </div>
+                      <td className="px-3 py-3.5">
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border ${
+                            guest.status === RsvpState.CONFIRMED
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                              : guest.status === RsvpState.DECLINED
+                              ? "bg-stone-100 text-stone-600 border-stone-200"
+                              : "bg-amber-50 text-amber-800 border-amber-200"
+                          }`}
+                        >
+                          {guest.status === RsvpState.CONFIRMED && "Confirmado"}
+                          {guest.status === RsvpState.PENDING && "Pendente"}
+                          {guest.status === RsvpState.DECLINED && "Ausente"}
+                        </span>
                       </td>
 
-                      <td className="px-2.5 py-3">
-                        <div className="flex flex-col gap-1 items-start">
-                          <span
-                            className={`inline-flex items-center gap-1 text-[8px] font-bold px-2 py-0.5 rounded border border-black ${
-                              guest.status === "ACCEPTED"
-                                ? "bg-emerald-950 text-emerald-400 border-emerald-600"
-                                : guest.status === "DECLINED"
-                                ? "bg-red-950 text-red-400 border-red-600"
-                                : "bg-amber-950 text-amber-400 border-amber-600"
-                            }`}
-                          >
-                            {guest.status === "ACCEPTED"
-                              ? "HP 100% (CONFIRMADO)"
-                              : guest.status === "DECLINED"
-                              ? "HP 0% (RECUSADO)"
-                              : "HP 50% (PENDENTE)"}
+                      <td className="px-3 py-3.5 text-[11px] text-content-secondary">
+                        {guest.status === RsvpState.CONFIRMED ? (
+                          <span>
+                            {guest.attendance === AttendanceSelection.BOTH && "Cerimônia + Almoço"}
+                            {guest.attendance === AttendanceSelection.ONLY_CEREMONY && "Apenas Cerimônia"}
+                            {guest.attendance === AttendanceSelection.ONLY_RESTAURANT && "Apenas Almoço"}
                           </span>
-                          {guest.status === "ACCEPTED" && (
-                            <span className="text-[7.5px] px-1.5 py-0.5 rounded bg-black/60 border border-stone-700 text-gold-300">
-                              {guest.attendance === "BOTH"
-                                ? "⚔️ Cartório + JP Steak"
-                                : guest.attendance === "ONLY_CEREMONY"
-                                ? "📜 Só Cartório"
-                                : guest.attendance === "ONLY_DINNER"
-                                ? "🥩 Só JP Steak"
-                                : "Nenhum"}
-                            </span>
-                          )}
-                        </div>
+                        ) : (
+                          <span className="text-content-muted">—</span>
+                        )}
                       </td>
 
-                      <td className="px-2 py-3 text-center font-bold text-gold-300">
-                        {guest.status === "ACCEPTED"
-                          ? `+${guest.confirmedPlusOnes}`
-                          : `max ${guest.allowedPlusOnes}`}
+                      <td className="px-3 py-3.5 text-center text-content-primary font-medium">
+                        {guest.status === RsvpState.CONFIRMED
+                          ? `${guest.confirmedGuests} de ${guest.maxGuests}`
+                          : `Até ${guest.maxGuests}`}
                       </td>
 
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           {/* Copiar Link */}
                           <button
+                            type="button"
                             onClick={() => copyInviteLink(guest)}
-                            title="Copiar Link da Quest"
-                            className={`p-1.5 rounded border-2 border-black pixel-shadow-sm transition-colors flex items-center gap-1 cursor-pointer ${
-                              isCopied
-                                ? "bg-emerald-600 text-white"
-                                : "bg-stone-800 text-stone-300 hover:bg-stone-700"
-                            }`}
+                            title="Copiar link do convite"
+                            className="p-1.5 rounded-full hover:bg-canvas-subtle text-content-secondary hover:text-accent-olive transition-colors cursor-pointer"
                           >
                             {isCopied ? (
-                              <Check className="w-3 h-3" />
+                              <Check className="w-4 h-4 text-emerald-600" />
                             ) : (
-                              <Copy className="w-3 h-3" />
+                              <Copy className="w-4 h-4" />
                             )}
-                            <span className="text-[7px]">LINK</span>
                           </button>
 
-                          {/* WhatsApp Broadcast */}
+                          {/* WhatsApp */}
                           <button
+                            type="button"
                             onClick={() => openWhatsAppBroadcast(guest)}
-                            title="Enviar convite via WhatsApp"
-                            className="p-1.5 rounded bg-emerald-900 hover:bg-emerald-800 text-emerald-300 border-2 border-black pixel-shadow-sm cursor-pointer"
+                            title="Enviar convite pelo WhatsApp"
+                            className="p-1.5 rounded-full hover:bg-emerald-50 text-content-secondary hover:text-emerald-700 transition-colors cursor-pointer"
                           >
-                            <MessageCircle className="w-3 h-3" />
+                            <MessageCircle className="w-4 h-4" />
                           </button>
 
-                          {/* Exportar Imagem Retrô */}
+                          {/* Exportar Imagem */}
                           <button
-                            onClick={() => {
-                              retroSound.playSelect();
-                              setImageModalGuest(guest);
-                            }}
-                            title="Exportar Cartão de Jogador PNG"
-                            className="p-1.5 rounded bg-gold-600 hover:bg-gold-500 text-black border-2 border-black pixel-shadow-sm cursor-pointer"
+                            type="button"
+                            onClick={() => setImageModalGuest(guest)}
+                            title="Gerar cartão em imagem"
+                            className="p-1.5 rounded-full hover:bg-canvas-subtle text-content-secondary hover:text-accent-olive transition-colors cursor-pointer"
                           >
-                            <ImageIcon className="w-3 h-3" />
+                            <ImageIcon className="w-4 h-4" />
                           </button>
 
                           {/* Editar */}
                           <button
-                            onClick={() => {
-                              retroSound.playSelect();
-                              setFormModalGuest(guest);
-                            }}
-                            title="Editar Atributos"
-                            className="p-1.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 border-2 border-black pixel-shadow-sm cursor-pointer"
+                            type="button"
+                            onClick={() => setFormModalGuest(guest)}
+                            title="Editar convidado"
+                            className="p-1.5 rounded-full hover:bg-canvas-subtle text-content-secondary hover:text-accent-olive transition-colors cursor-pointer"
                           >
-                            <Edit2 className="w-3 h-3" />
+                            <Edit2 className="w-4 h-4" />
                           </button>
 
-                          {/* Deletar */}
+                          {/* Excluir */}
                           <button
+                            type="button"
                             onClick={() => handleDelete(guest.id, guest.name)}
-                            title="Excluir da Guilda"
-                            className="p-1.5 rounded bg-red-950 hover:bg-red-800 text-red-400 border-2 border-black pixel-shadow-sm cursor-pointer"
+                            title="Excluir da lista"
+                            className="p-1.5 rounded-full hover:bg-red-50 text-content-secondary hover:text-red-700 transition-colors cursor-pointer"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -380,15 +348,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
         </div>
       </div>
 
-      {/* Modal de Download de Imagem PNG Retrô */}
-      {imageModalGuest && (
-        <InviteImageModal
-          guest={imageModalGuest}
-          onClose={() => setImageModalGuest(null)}
-        />
-      )}
-
-      {/* Modal de Spawn New Player */}
+      {/* Modais */}
       {isNewGuestOpen && (
         <GuestFormModal
           onClose={() => setIsNewGuestOpen(false)}
@@ -396,12 +356,18 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
         />
       )}
 
-      {/* Modal de Edição */}
       {formModalGuest && (
         <GuestFormModal
           guest={formModalGuest}
           onClose={() => setFormModalGuest(null)}
           onGuestSaved={handleGuestSaved}
+        />
+      )}
+
+      {imageModalGuest && (
+        <InviteImageModal
+          guest={imageModalGuest}
+          onClose={() => setImageModalGuest(null)}
         />
       )}
     </div>

@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { createGuest, updateGuest } from "@/app/admin/actions";
-import { X, Sparkles } from "lucide-react";
-import { Guest } from "@prisma/client";
-import { SCRIPTS } from "@/data/scripts";
+import { X } from "lucide-react";
+import { Guest, AttendanceSelection, RsvpState } from "@prisma/client";
 
 interface GuestFormModalProps {
   guest?: Guest | null;
@@ -34,185 +33,129 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
       }
       onClose();
     } else {
-      setError(res.error || "Erro ao salvar aventureiro.");
+      setError(res.error || "Erro ao salvar convidado.");
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 font-pixel select-none">
-      <div className="bg-[#1a1c23] rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 border-4 border-black pixel-shadow-lg text-white max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b-2 border-stone-700">
-          <h3 className="text-xs sm:text-sm font-bold text-gold-400">
-            {guest ? "EDITAR AVENTUREIRO" : "SPAWN NEW PLAYER (NOVO CADASTRO)"}
-          </h3>
+    <div className="fixed inset-0 z-50 bg-content-primary/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 animate-fade-up">
+        <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
+          <div>
+            <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
+              {guest ? "Editar Registro" : "Novo Convidado"}
+            </span>
+            <h3 className="font-serif text-2xl font-normal text-content-primary">
+              {guest ? guest.name : "Cadastrar Convidado"}
+            </h3>
+          </div>
           <button
             onClick={onClose}
-            className="p-1 text-stone-400 hover:text-white rounded hover:bg-stone-800"
+            className="p-1.5 text-content-secondary hover:text-content-primary rounded-full hover:bg-canvas-subtle transition-colors cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" strokeWidth={1.5} />
           </button>
         </div>
 
         {error && (
-          <div className="p-2.5 bg-red-950 text-red-300 text-[9px] rounded border border-red-700">
+          <div className="p-3 bg-red-50 text-red-800 text-xs rounded-xl border border-red-200">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 text-[9px]">
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
           <div>
-            <label className="block text-gold-300 font-bold mb-1">
-              NOME DO AVENTUREIRO / GUILDA
+            <label className="block text-content-primary font-medium mb-1.5">
+              Nome Formal no Convite *
             </label>
             <input
               type="text"
               name="name"
               required
               defaultValue={guest?.name || ""}
-              placeholder="Ex: Carlos Moura, Vô João e Vó Maria"
-              className="w-full px-3 py-2 bg-black border-2 border-stone-700 rounded text-gold-300 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
+              placeholder="Ex: Tios Paulo & Lúcia, Carlos Moura"
+              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-gold-300 font-bold mb-1">
-                GÊNERO (AVATAR)
+              <label className="block text-content-primary font-medium mb-1.5">
+                WhatsApp (Opcional)
               </label>
-              <select
-                name="gender"
-                defaultValue={guest?.gender || "M"}
-                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
-              >
-                <option value="M">Masculino (Guerreiro)</option>
-                <option value="F">Feminino (Maga/Diva)</option>
-              </select>
+              <input
+                type="text"
+                name="phone"
+                defaultValue={guest?.phone || ""}
+                placeholder="(16) 99999-9999"
+                className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
+              />
             </div>
 
             <div>
-              <label className="block text-gold-300 font-bold mb-1">
-                CATEGORIA
-              </label>
-              <select
-                name="category"
-                defaultValue={guest?.category || "AMIGOS"}
-                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
-              >
-                <option value="PADRINHOS">Padrinhos</option>
-                <option value="FAMILIA_IDOSOS">Família / Idosos</option>
-                <option value="AMIGOS">Amigos</option>
-                <option value="GERAL">Geral</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-gold-300 font-bold mb-1">
-                TIPO DE FLUXO
-              </label>
-              <select
-                name="flowType"
-                defaultValue={guest?.flowType || "GAMEPLAY"}
-                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
-              >
-                <option value="GAMEPLAY">GamePlay (16-Bit RPG)</option>
-                <option value="CLASSIC">Clássico (Pergaminho)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gold-300 font-bold mb-1">
-                SLOTS PARTY (BUFFS)
+              <label className="block text-content-primary font-medium mb-1.5">
+                Limite de Convidados
               </label>
               <input
                 type="number"
-                name="allowedPlusOnes"
-                min="0"
+                name="maxGuests"
+                min="1"
                 max="10"
-                defaultValue={guest?.allowedPlusOnes ?? 0}
-                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-gold-300 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
+                defaultValue={guest?.maxGuests ?? 1}
+                className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all"
               />
             </div>
           </div>
 
           {guest && (
-            <div>
-              <label className="block text-gold-300 font-bold mb-1">
-                STATUS DE PRESENÇA NAS FASES
-              </label>
-              <select
-                name="attendance"
-                defaultValue={guest.attendance || "BOTH"}
-                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
-              >
-                <option value="BOTH">⚔️ FASE 1 & 2 (Cartório + Banquete JP Steakhouse)</option>
-                <option value="ONLY_CEREMONY">📜 FASE 1 (Apenas Cartório / 0 Gold)</option>
-                <option value="ONLY_DINNER">🥩 FASE 2 (Apenas JP Steakhouse / Paga seu Loot)</option>
-                <option value="NONE">❌ NENHUMA (Recusou)</option>
-              </select>
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="block text-content-primary font-medium mb-1.5">
+                  Presença / Fases
+                </label>
+                <select
+                  name="attendance"
+                  defaultValue={guest.attendance}
+                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive"
+                >
+                  <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
+                  <option value={AttendanceSelection.ONLY_CEREMONY}>Apenas Cerimônia</option>
+                  <option value={AttendanceSelection.ONLY_RESTAURANT}>Apenas Almoço</option>
+                  <option value={AttendanceSelection.DECLINED}>Não comparecerá</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-content-primary font-medium mb-1.5">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  defaultValue={guest.status}
+                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive"
+                >
+                  <option value={RsvpState.CONFIRMED}>Confirmado</option>
+                  <option value={RsvpState.PENDING}>Pendente</option>
+                  <option value={RsvpState.DECLINED}>Ausente</option>
+                </select>
+              </div>
             </div>
           )}
 
-          <div>
-            <label className="block text-gold-300 font-bold mb-1">
-              ROTEIRO (DEIXE VAZIO PARA SORTEAR 1 DOS 30 AUTOMÁTICO)
-            </label>
-            <select
-              name="scriptId"
-              defaultValue={guest?.scriptId || ""}
-              className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[8px] focus:outline-none focus:border-gold-400 font-pixel"
-            >
-              <option value="">[AUTO: Sorteio Único Inteligente Sem Repetição]</option>
-              <optgroup label="--- ROTEIROS MASCULINOS (15) ---">
-                {Object.values(SCRIPTS)
-                  .filter((s) => s.gender === "M")
-                  .map((s) => (
-                    <option key={s.id} value={s.id}>
-                      [{s.id}] {s.title}
-                    </option>
-                  ))}
-              </optgroup>
-              <optgroup label="--- ROTEIROS FEMININOS (15) ---">
-                {Object.values(SCRIPTS)
-                  .filter((s) => s.gender === "F")
-                  .map((s) => (
-                    <option key={s.id} value={s.id}>
-                      [{s.id}] {s.title}
-                    </option>
-                  ))}
-              </optgroup>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-gold-300 font-bold mb-1">
-              RECADO ESPECIAL / NOTA DOS NOIVOS
-            </label>
-            <textarea
-              name="customNote"
-              rows={2}
-              defaultValue={guest?.customNote || ""}
-              placeholder="Ex: Traga sua famosa alegria! Ou: Não ouse atrasar!"
-              className="w-full px-3 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
-            />
-          </div>
-
-          <div className="flex gap-2.5 pt-3">
+          <div className="flex gap-3 pt-4 border-t border-border-hairline">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded bg-stone-800 text-stone-400 hover:text-white border-2 border-black pixel-shadow text-[9px] cursor-pointer"
+              className="flex-1 py-3 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
             >
-              CANCELAR
+              Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-2.5 rounded bg-gold-500 hover:bg-gold-400 text-black border-2 border-black pixel-shadow text-[9px] font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              {loading ? "SALVANDO..." : "SPAWN PLAYER"}
+              {loading ? "Salvando..." : guest ? "Salvar Alterações" : "Criar Convite"}
             </button>
           </div>
         </form>

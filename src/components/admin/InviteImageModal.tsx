@@ -2,16 +2,11 @@
 
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
-import { Download, X, Calendar, Sparkles, Heart } from "lucide-react";
+import { Download, X } from "lucide-react";
+import { Guest } from "@prisma/client";
 
 interface InviteImageModalProps {
-  guest: {
-    name: string;
-    token: string;
-    category: string;
-    flowType: string;
-    customNote?: string | null;
-  };
+  guest: Guest;
   onClose: () => void;
 }
 
@@ -25,17 +20,17 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
     try {
       const dataUrl = await toPng(cardRef.current, {
         quality: 1,
-        pixelRatio: 2,
-        backgroundColor: "#0d1b2a",
+        pixelRatio: 2.5,
+        backgroundColor: "#FDFBF7",
       });
 
       const link = document.createElement("a");
-      link.download = `quest-card-${guest.token}.png`;
+      link.download = `convite-${guest.token}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error("Erro ao exportar imagem retrô:", err);
-      alert("Não foi possível gerar a imagem retrô. Tente novamente.");
+      console.error("Erro ao gerar imagem:", err);
+      alert("Não foi possível gerar a imagem. Tente novamente.");
     } finally {
       setDownloading(false);
     }
@@ -47,135 +42,104 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
       : `/c/${guest.token}`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto font-pixel select-none">
-      <div className="bg-[#1a1c23] rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 border-4 border-black pixel-shadow-lg my-6">
-        <div className="flex items-center justify-between pb-3 border-b-2 border-stone-700">
+    <div className="fixed inset-0 z-50 bg-content-primary/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-surface-card rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-border-hairline shadow-editorial-lg my-6 animate-fade-up">
+        <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-gold-400">
-              VIP QUEST CARD (EXPORTAÇÃO PNG)
+            <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
+              Cartão Digital
+            </span>
+            <h3 className="font-serif text-2xl font-normal text-content-primary">
+              Exportar Convite em Imagem
             </h3>
-            <p className="text-[9px] text-stone-400 font-sans mt-0.5">
-              Pronto para envio no WhatsApp ou exibição nas redes da guilda
-            </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-stone-400 hover:text-white rounded hover:bg-stone-800"
+            className="p-1.5 text-content-secondary hover:text-content-primary rounded-full hover:bg-canvas-subtle transition-colors cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" strokeWidth={1.5} />
           </button>
         </div>
 
-        {/* Prévia do Cartão que será renderizado em PNG */}
+        {/* PRÉVIA DO CARTÃO EDITORIAL */}
         <div className="flex justify-center">
           <div
             ref={cardRef}
-            className="w-[360px] min-h-[520px] bg-[#101926] p-6 rounded-2xl border-4 border-black pixel-shadow-lg flex flex-col justify-between text-center relative overflow-hidden text-white"
+            className="w-[340px] bg-canvas-base p-8 rounded-3xl border border-border-hairline shadow-editorial text-center space-y-6 relative overflow-hidden"
           >
-            {/* Efeito Moldura Dourada Retrô */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-gold-400" />
-            <div className="absolute inset-2 border-2 border-[#d7aa5f]/50 pointer-events-none rounded-xl" />
-
-            <div className="space-y-3 pt-2">
-              <div className="inline-flex items-center gap-1 px-3 py-1 bg-black/80 border border-gold-400 rounded text-gold-300 text-[8px] uppercase tracking-wider">
-                <Sparkles className="w-3 h-3 text-gold-400" />
-                CONVOCAÇÃO DE AVENTUREIRO
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[8px] text-stone-400 tracking-widest uppercase block">
-                  CAMPANHA MATRIMONIAL OFICIAL
-                </span>
-                <h1 className="text-base sm:text-lg font-extrabold text-gold-400 tracking-wide">
-                  JENIFFER & RIAN
-                </h1>
-              </div>
-
-              <div className="w-16 h-1 bg-gold-400 mx-auto" />
-
-              <div className="pt-2">
-                <span className="text-[8px] text-stone-400 uppercase">CONVOCADO DE HONRA:</span>
-                <h2 className="text-sm font-bold text-white mt-0.5 text-shadow-pixel">
-                  {guest.name}
-                </h2>
-                {guest.customNote && (
-                  <p className="text-[8px] text-gold-200 italic mt-1 px-2">
-                    &ldquo;{guest.customNote}&rdquo;
-                  </p>
-                )}
-              </div>
+            {/* Monograma */}
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-surface-card border border-border-hairline text-accent-olive mx-auto">
+              <span className="font-serif text-base font-light tracking-wider">J & R</span>
             </div>
 
-            {/* Sprites Pixel dos Noivos no Cartão */}
-            <div className="my-3 flex items-center justify-center gap-4 py-2 bg-black/50 border border-stone-800 rounded-lg">
-              <div className="text-center">
-                <span className="text-[7px] text-pink-300 block">NOIVA</span>
-                <span className="text-xl">👰</span>
-              </div>
-              <div className="text-red-500 animate-pulse text-sm">💖</div>
-              <div className="text-center">
-                <span className="text-[7px] text-gold-300 block">NOIVO</span>
-                <span className="text-xl">🤵</span>
-              </div>
+            <div className="space-y-1">
+              <span className="text-[9px] font-sans tracking-[0.25em] uppercase text-content-secondary block">
+                Convite de Casamento
+              </span>
+              <h2 className="font-serif text-2xl text-content-primary font-normal">
+                Jeniffer & Rian
+              </h2>
             </div>
 
-            {/* Informações das Duas Fases */}
-            <div className="p-2.5 rounded-lg bg-black/60 border border-gold-400/60 space-y-1.5 text-[7.5px]">
-              <div className="flex items-center justify-center gap-1 text-gold-300 font-bold text-[8px]">
-                <Calendar className="w-3.5 h-3.5 text-gold-400" />
-                12 DE DEZEMBRO DE 2026
-              </div>
+            <div className="gold-divider w-16 mx-auto" />
 
-              {/* Fase 1 */}
-              <div className="border-t border-stone-800 pt-1">
-                <div className="text-amber-400 font-bold flex items-center justify-center gap-1">
-                  📜 FASE 1: O JURAMENTO (10:30H)
+            <div className="space-y-1">
+              <span className="text-[9px] font-sans tracking-[0.15em] uppercase text-content-muted block">
+                Convidado(a)
+              </span>
+              <h3 className="font-serif text-xl font-medium text-accent-olive">
+                {guest.name}
+              </h3>
+            </div>
+
+            {/* Informações dos dois momentos */}
+            <div className="space-y-2 text-left bg-surface-card p-4 rounded-2xl border border-border-hairline text-xs font-sans text-content-secondary">
+              <div className="flex items-center justify-between text-content-primary font-medium border-b border-border-hairline/60 pb-1.5">
+                <span>12 de Dezembro de 2026</span>
+                <span>Ribeirão Preto</span>
+              </div>
+              <div className="space-y-1 pt-1 text-[11px]">
+                <div className="font-medium text-content-primary">
+                  10:30h — 1º Cartório de Registro Civil
                 </div>
-                <div className="text-stone-300">1º Cartório de Registro Civil • 0 Gold</div>
-              </div>
-
-              {/* Fase 2 */}
-              <div className="border-t border-stone-800 pt-1">
-                <div className="text-red-400 font-bold flex items-center justify-center gap-1">
-                  🥩 FASE 2: O GRANDE ALMOÇO
+                <div className="text-content-muted text-[10px]">
+                  Rua Visconde de Inhaúma, 1315 — Centro
                 </div>
-                <div className="text-stone-300">JP Steakhouse (Almoço individual por comanda)</div>
+              </div>
+              <div className="space-y-1 pt-1 text-[11px] border-t border-border-hairline/60">
+                <div className="font-medium text-content-primary">
+                  ~12:30h — Almoço na Churrascaria JP Steakhouse
+                </div>
+                <div className="text-content-muted text-[10px]">
+                  Por adesão individual • Av. Alice de Moura Bragheto, 76
+                </div>
               </div>
             </div>
 
-            {/* Rodapé do Cartão */}
-            <div className="pt-2 border-t border-stone-800 space-y-1">
-              <p className="text-[8px] text-gold-300 uppercase tracking-wider">
-                CONFIRME SUA PRESENÇA NA QUEST:
-              </p>
-              <p className="text-[7px] text-emerald-400 break-all font-mono">
-                {inviteUrl}
-              </p>
-              <div className="flex items-center justify-center gap-1 text-[8px] text-stone-400 pt-1">
-                <Heart className="w-3 h-3 text-red-500 fill-red-500" />
-                <span>SUA PARTY TE ESPERA!</span>
-              </div>
+            <div className="pt-2 border-t border-border-hairline text-[10px] font-sans text-content-muted">
+              Confirme sua presença pelo link exclusivo:
+              <br />
+              <span className="text-accent-olive font-medium break-all">{inviteUrl}</span>
             </div>
           </div>
         </div>
 
-        {/* Ações */}
-        <div className="flex gap-2.5 pt-2 text-[9px]">
+        <div className="flex gap-3 pt-2">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 rounded bg-stone-800 text-stone-400 hover:text-white border-2 border-black pixel-shadow cursor-pointer"
+            className="flex-1 py-3 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
           >
-            FECHAR
+            Fechar
           </button>
           <button
             type="button"
             disabled={downloading}
             onClick={handleDownload}
-            className="flex-1 py-2.5 rounded bg-gold-500 hover:bg-gold-400 text-black font-bold border-2 border-black pixel-shadow flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-1 py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial flex items-center justify-center gap-2"
           >
-            <Download className="w-3.5 h-3.5" />
-            {downloading ? "EXPORTANDO..." : "BAIXAR CARTÃO (PNG)"}
+            <Download className="w-4 h-4" strokeWidth={1.5} />
+            <span>{downloading ? "Gerando..." : "Baixar Imagem"}</span>
           </button>
         </div>
       </div>

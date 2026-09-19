@@ -2,19 +2,18 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-
-import { PhaseAttendance, RsvpStatus } from "@prisma/client";
+import { AttendanceSelection, RsvpState } from "@prisma/client";
 
 export async function submitRsvp({
   token,
-  status,
-  confirmedPlusOnes = 0,
-  attendance = PhaseAttendance.BOTH,
+  attendance,
+  confirmedGuests,
+  guestMessage,
 }: {
   token: string;
-  status: RsvpStatus;
-  confirmedPlusOnes?: number;
-  attendance?: PhaseAttendance;
+  attendance: AttendanceSelection;
+  confirmedGuests: number;
+  guestMessage?: string;
 }) {
   try {
     const guest = await prisma.guest.findUnique({
@@ -22,32 +21,34 @@ export async function submitRsvp({
     });
 
     if (!guest) {
-      return { success: false, error: "Convidado não encontrado." };
+      return { success: false, error: "Convite não encontrado no sistema." };
     }
 
-    const safePlusOnes = Math.min(
-      Math.max(0, confirmedPlusOnes),
-      guest.allowedPlusOnes
-    );
+    const isDeclined = attendance === AttendanceSelection.DECLINED;
+    const safeConfirmed = isDeclined
+      ? 0
+      : Math.min(Math.max(1, confirmedGuests), guest.maxGuests);
 
-    const finalAttendance = status === "DECLINED" ? PhaseAttendance.NONE : attendance;
+    const status: RsvpState = isDeclined ? RsvpState.DECLINED : RsvpState.CONFIRMED;
 
     const updated = await prisma.guest.update({
       where: { token },
       data: {
+        attendance,
         status,
-        attendance: finalAttendance,
-        confirmedPlusOnes: status === "ACCEPTED" ? safePlusOnes : 0,
+        confirmedGuests: safeConfirmed,
+        guestMessage: guestMessage?.trim() || null,
         respondedAt: new Date(),
       },
     });
 
+    revalidatePath(`/c/${token}`);
     revalidatePath(`/convite/${token}`);
     revalidatePath("/admin");
 
     return { success: true, guest: updated };
   } catch (error) {
-    console.error("Erro ao registrar RSVP:", error);
-    return { success: false, error: "Falha ao registrar resposta. Tente novamente." };
+    console.error("Erro ao registrar confirmação de presença:", error);
+    return { success: false, error: "Não foi possível salvar sua resposta no momento. Por favor, tente novamente." };
   }
 }

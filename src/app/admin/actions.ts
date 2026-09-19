@@ -2,11 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { generateToken } from "@/lib/utils";
-import { Category, FlowType, Gender, PhaseAttendance } from "@prisma/client";
+import { AttendanceSelection, RsvpState } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-
-import { pickUniqueScript } from "@/data/scripts";
 
 export async function loginAdmin(password: string) {
   const expectedPassword = process.env.ADMIN_PASSWORD || "casamento12122026";
@@ -21,7 +19,7 @@ export async function loginAdmin(password: string) {
     });
     return { success: true };
   }
-  return { success: false, error: "Senha de Game Master incorreta!" };
+  return { success: false, error: "Senha de acesso incorreta." };
 }
 
 export async function logoutAdmin(): Promise<void> {
@@ -33,77 +31,57 @@ export async function logoutAdmin(): Promise<void> {
 export async function createGuest(formData: FormData) {
   try {
     const name = formData.get("name") as string;
-    const gender = (formData.get("gender") as Gender) || Gender.M;
-    const category = (formData.get("category") as Category) || Category.AMIGOS;
-    const flowType = (formData.get("flowType") as FlowType) || FlowType.GAMEPLAY;
-    const scriptIdParam = (formData.get("scriptId") as string) || null;
-    const customNote = (formData.get("customNote") as string) || null;
-    const allowedPlusOnes = parseInt((formData.get("allowedPlusOnes") as string) || "0", 10);
+    const phone = (formData.get("phone") as string) || null;
+    const maxGuests = parseInt((formData.get("maxGuests") as string) || "1", 10);
 
     if (!name || name.trim().length === 0) {
-      return { success: false, error: "Nome do convidado é obrigatório." };
+      return { success: false, error: "O nome do convidado é obrigatório." };
     }
 
     const token = generateToken(name);
-
-    let assignedScriptId = scriptIdParam;
-    if (!assignedScriptId && flowType === FlowType.GAMEPLAY) {
-      // Buscar scripts já utilizados para o mesmo gênero para garantir diversidade
-      const existingGuests = await prisma.guest.findMany({
-        where: { gender, scriptId: { not: null } },
-        select: { scriptId: true },
-      });
-      const usedScriptIds = existingGuests
-        .map((g) => g.scriptId)
-        .filter((id): id is string => Boolean(id));
-
-      assignedScriptId = pickUniqueScript(gender, usedScriptIds);
-    }
 
     const guest = await prisma.guest.create({
       data: {
         token,
         name: name.trim(),
-        gender,
-        category,
-        flowType,
-        scriptId: assignedScriptId,
-        customNote: customNote ? customNote.trim() : null,
-        allowedPlusOnes: isNaN(allowedPlusOnes) ? 0 : allowedPlusOnes,
+        phone: phone ? phone.trim() : null,
+        maxGuests: isNaN(maxGuests) || maxGuests < 1 ? 1 : maxGuests,
+        confirmedGuests: 0,
+        attendance: AttendanceSelection.BOTH,
+        status: RsvpState.PENDING,
       },
     });
 
     revalidatePath("/admin");
     return { success: true, guest };
   } catch (error) {
-    console.error("Erro ao criar convidado:", error);
-    return { success: false, error: "Falha ao salvar convidado." };
+    console.error("Erro ao cadastrar convidado:", error);
+    return { success: false, error: "Falha ao cadastrar convidado." };
   }
 }
 
 export async function updateGuest(id: string, formData: FormData) {
   try {
     const name = formData.get("name") as string;
-    const gender = (formData.get("gender") as Gender) || Gender.M;
-    const category = (formData.get("category") as Category) || Category.AMIGOS;
-    const flowType = (formData.get("flowType") as FlowType) || FlowType.GAMEPLAY;
-    const scriptId = (formData.get("scriptId") as string) || null;
-    const customNote = (formData.get("customNote") as string) || null;
-    const allowedPlusOnes = parseInt((formData.get("allowedPlusOnes") as string) || "0", 10);
+    const phone = (formData.get("phone") as string) || null;
+    const maxGuests = parseInt((formData.get("maxGuests") as string) || "1", 10);
+    const confirmedGuests = parseInt((formData.get("confirmedGuests") as string) || "0", 10);
+    const attendance = (formData.get("attendance") as AttendanceSelection) || AttendanceSelection.BOTH;
+    const status = (formData.get("status") as RsvpState) || RsvpState.PENDING;
 
-    const attendance = (formData.get("attendance") as PhaseAttendance) || undefined;
+    if (!name || name.trim().length === 0) {
+      return { success: false, error: "O nome é obrigatório." };
+    }
 
     const guest = await prisma.guest.update({
       where: { id },
       data: {
         name: name.trim(),
-        gender,
-        category,
-        flowType,
-        scriptId: scriptId || null,
-        customNote: customNote ? customNote.trim() : null,
-        allowedPlusOnes: isNaN(allowedPlusOnes) ? 0 : allowedPlusOnes,
-        ...(attendance ? { attendance } : {}),
+        phone: phone ? phone.trim() : null,
+        maxGuests: isNaN(maxGuests) || maxGuests < 1 ? 1 : maxGuests,
+        confirmedGuests: isNaN(confirmedGuests) ? 0 : confirmedGuests,
+        attendance,
+        status,
       },
     });
 

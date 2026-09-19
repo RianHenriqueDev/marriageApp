@@ -1,55 +1,50 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, AttendanceSelection, RsvpState } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Iniciando seed de convidados de demonstração...");
+  console.log("Iniciando seed de convidados de demonstração (Quiet Luxury)...");
 
   const mockGuests = [
     {
+      token: "tios-paulo-e-lucia-8a2",
+      name: "Tios Paulo & Lúcia",
+      phone: "(16) 99123-4567",
+      maxGuests: 2,
+      confirmedGuests: 2,
+      attendance: AttendanceSelection.BOTH,
+      status: RsvpState.CONFIRMED,
+      guestMessage: "Estaremos presentes com imensa alegria para abençoar a união de vocês!",
+    },
+    {
       token: "carlos-moura-a7x9",
       name: "Carlos Moura",
-      gender: "M" as const,
-      category: "AMIGOS" as const,
-      flowType: "GAMEPLAY" as const,
-      scriptId: "m_01",
-      customNote: "O chopp artesanal já tá gelando, nem invente de faltar!",
-      allowedPlusOnes: 1,
-      status: "PENDING" as const,
+      phone: "(16) 99876-5432",
+      maxGuests: 2,
+      confirmedGuests: 0,
+      attendance: AttendanceSelection.BOTH,
+      status: RsvpState.PENDING,
+      guestMessage: null,
     },
     {
       token: "juliana-silva-k2p4",
-      name: "Juliana Silva",
-      gender: "F" as const,
-      category: "AMIGOS" as const,
-      flowType: "GAMEPLAY" as const,
-      scriptId: "f_01",
-      customNote: "Separe o salto confortável porque vamos cantar no microfone!",
-      allowedPlusOnes: 1,
-      status: "PENDING" as const,
+      name: "Juliana Silva & Família",
+      phone: "(16) 99234-5678",
+      maxGuests: 3,
+      confirmedGuests: 3,
+      attendance: AttendanceSelection.BOTH,
+      status: RsvpState.CONFIRMED,
+      guestMessage: "Parabéns ao casal mais lindo! Mal podemos esperar pelo grande dia.",
     },
     {
       token: "vo-joao-e-vo-maria-d8v1",
-      name: "Vô João e Vó Maria",
-      gender: "M" as const,
-      category: "FAMILIA_IDOSOS" as const,
-      flowType: "CLASSIC" as const,
-      scriptId: null,
-      customNote: "A presença e a bênção de vocês é o nosso maior presente de casamento.",
-      allowedPlusOnes: 0,
-      status: "PENDING" as const,
-    },
-    {
-      token: "rodrigo-padrim-x9f2",
-      name: "Rodrigo (Padrinho)",
-      gender: "M" as const,
-      category: "PADRINHOS" as const,
-      flowType: "CLASSIC" as const,
-      scriptId: null,
-      customNote: "Missão dada é missão cumprida. Contamos com você no altar!",
-      allowedPlusOnes: 1,
-      status: "ACCEPTED" as const,
-      confirmedPlusOnes: 1,
+      name: "Vô João & Vó Maria",
+      phone: null,
+      maxGuests: 2,
+      confirmedGuests: 0,
+      attendance: AttendanceSelection.ONLY_CEREMONY,
+      status: RsvpState.PENDING,
+      guestMessage: null,
     },
   ];
 

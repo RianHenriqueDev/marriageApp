@@ -8,50 +8,34 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Gender {
-  M
-  F
+enum AttendanceSelection {
+  BOTH            // Participará da Cerimônia no Cartório e do Almoço na JP Steakhouse
+  ONLY_CEREMONY   // Participará exclusivamente da Cerimônia no Cartório
+  ONLY_RESTAURANT // Participará exclusivamente do Almoço na JP Steakhouse
+  DECLINED        // Não poderá comparecer a nenhum momento
 }
 
-enum Category {
-  PADRINHOS
-  FAMILIA_IDOSOS
-  AMIGOS
-  GERAL
-}
-
-enum FlowType {
-  GAMEPLAY
-  CLASSIC
-}
-
-enum RsvpStatus {
+enum RsvpState {
   PENDING
-  ACCEPTED
+  CONFIRMED
   DECLINED
 }
 
-enum PhaseAttendance {
-  BOTH           // Cartório + JP Steakhouse
-  ONLY_CEREMONY   // Apenas Cartório
-  ONLY_DINNER     // Apenas JP Steakhouse
-  NONE            // Recusou ambos
+model Guest {
+  id                 String              @id @default(cuid())
+  token              String              @unique // slug limpo e humanizado (ex: tios-paulo-e-lucia-8a2)
+  name               String              // Nome formal exibido no convite (ex: "Paulo & Lúcia")
+  phone              String?             // WhatsApp formatado
+  maxGuests          Int                 @default(1) // Capacidade máxima de convidados cobertos por este convite
+  confirmedGuests    Int                 @default(0) // Quantidade real confirmada
+  attendance         AttendanceSelection @default(BOTH)
+  status             RsvpState           @default(PENDING)
+  guestMessage       String?             // Recado especial deixado para o casal
+  respondedAt        DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([token])
+  @@index([status])
 }
 
-model Guest {
-  id                 String          @id @default(cuid())
-  token              String          @unique // slug único para a URL (ex: carlos-moura-a7x9)
-  name               String          // Nome exibido (ex: "Carlos Moura", "Vô João e Vó Maria")
-  gender             Gender          @default(M)
-  category           Category        @default(AMIGOS)
-  flowType           FlowType        @default(GAMEPLAY)
-  scriptId           String?         // ID do roteiro atribuído (ex: 'm_01', 'f_04') para evitar repetição
-  customNote         String?         // Mensagem de zoeira extra ou texto de carinho para idosos
-  allowedPlusOnes    Int             @default(0) // Quantos acompanhantes tem direito
-  confirmedPlusOnes  Int             @default(0) // Quantos confirmou levar
-  attendance         PhaseAttendance @default(BOTH)
-  status             RsvpStatus      @default(PENDING)
-  respondedAt        DateTime?
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-}

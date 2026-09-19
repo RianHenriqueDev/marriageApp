@@ -45,33 +45,32 @@ export function Countdown() {
 
   if (!mounted) {
     return (
-      <div className="flex justify-center gap-4 py-6">
-        <div className="w-16 h-16 bg-gold-100/50 rounded-xl animate-pulse" />
-        <div className="w-16 h-16 bg-gold-100/50 rounded-xl animate-pulse" />
-        <div className="w-16 h-16 bg-gold-100/50 rounded-xl animate-pulse" />
-        <div className="w-16 h-16 bg-gold-100/50 rounded-xl animate-pulse" />
+      <div className="flex justify-center gap-3 sm:gap-6 py-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="w-16 h-20 bg-canvas-subtle/60 rounded-2xl animate-pulse" />
+        ))}
       </div>
     );
   }
 
   const items = [
-    { label: "DIAS", value: timeLeft.days },
-    { label: "HORAS", value: timeLeft.hours },
-    { label: "MIN", value: timeLeft.minutes },
-    { label: "SEG", value: timeLeft.seconds },
+    { label: "Dias", value: timeLeft.days },
+    { label: "Horas", value: timeLeft.hours },
+    { label: "Minutos", value: timeLeft.minutes },
+    { label: "Segundos", value: timeLeft.seconds },
   ];
 
   return (
-    <div className="flex justify-center items-center gap-1.5 sm:gap-4 py-2 sm:py-4">
+    <div className="flex justify-center items-center gap-2.5 sm:gap-6 py-3">
       {items.map((item, idx) => (
         <div
           key={idx}
-          className="flex flex-col items-center bg-[#181d27] border-2 border-black pixel-shadow-sm rounded-lg px-2 sm:px-4 py-2 min-w-[54px] sm:min-w-[75px] transition-transform"
+          className="flex flex-col items-center justify-center bg-surface-card border border-border-hairline shadow-editorial rounded-2xl px-3 sm:px-5 py-3 min-w-[62px] sm:min-w-[84px] transition-transform"
         >
-          <span className="font-pixel text-base sm:text-2xl font-bold text-gold-400 tracking-tight">
+          <span className="font-serif text-2xl sm:text-4xl font-normal text-content-primary tracking-tight">
             {String(item.value).padStart(2, "0")}
           </span>
-          <span className="font-pixel text-[7px] sm:text-[9px] font-semibold tracking-wider text-stone-400 mt-1 uppercase">
+          <span className="font-sans text-[9px] sm:text-[11px] font-medium tracking-[0.15em] text-content-secondary mt-1 uppercase">
             {item.label}
           </span>
         </div>
