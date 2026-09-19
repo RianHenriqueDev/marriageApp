@@ -1,7 +1,7 @@
 datasource db {
-  provider  = "mysql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider  = "postgres"
+url       = env("marriageapp_PRISMA_DATABASE_URL")
+  directUrl = env("marriageapp_POSTGRES_URL")
 }
 
 generator client {

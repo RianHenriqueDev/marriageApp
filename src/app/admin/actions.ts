@@ -24,11 +24,10 @@ export async function loginAdmin(password: string) {
   return { success: false, error: "Senha de Game Master incorreta!" };
 }
 
-export async function logoutAdmin() {
+export async function logoutAdmin(): Promise<void> {
   const cookieStore = cookies();
   cookieStore.delete("admin_session");
   revalidatePath("/admin");
-  return { success: true };
 }
 
 export async function createGuest(formData: FormData) {
