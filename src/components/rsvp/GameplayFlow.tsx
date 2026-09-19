@@ -123,8 +123,11 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
     const tauntIndex = Math.min(nextCount - 1, script.taunts.length - 1);
     setCurrentTaunt(script.taunts[tauntIndex]);
 
-    const randomX = (Math.random() - 0.5) * 200;
-    const randomY = (Math.random() - 0.5) * 110;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const maxRangeX = isMobile ? 80 : 180;
+    const maxRangeY = isMobile ? 60 : 100;
+    const randomX = (Math.random() - 0.5) * maxRangeX;
+    const randomY = (Math.random() - 0.5) * maxRangeY;
     setRunButtonOffset({ x: randomX, y: randomY });
   };
 
@@ -164,31 +167,31 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
   if (currentStatus === "ACCEPTED" || currentStatus === "DECLINED") {
     const isAccepted = currentStatus === "ACCEPTED";
     return (
-      <div className="w-full max-w-[720px] mx-auto p-3 font-pixel select-none">
-        <div className="relative bg-[#1a1c23] border-4 border-black pixel-shadow-lg rounded-2xl p-4 sm:p-6 overflow-hidden">
+      <div className="w-full max-w-[720px] mx-auto p-1.5 sm:p-3 font-pixel select-none">
+        <div className="relative bg-[#1a1c23] border-4 border-black pixel-shadow-lg rounded-xl sm:rounded-2xl p-3.5 sm:p-6 overflow-hidden">
           {/* Top Bar do Console */}
-          <div className="flex items-center justify-between pb-3 border-b-2 border-black/60 mb-5 text-[#f6eed9] text-[10px] sm:text-xs">
+          <div className="flex items-center justify-between pb-3 border-b-2 border-black/60 mb-4 sm:mb-5 text-[#f6eed9] text-[9px] sm:text-xs">
             <span className="flex items-center gap-1 text-gold-400">
-              <Sparkles className="w-4 h-4" /> SAVE SLOT #01: CONCLUÍDO
+              <Sparkles className="w-3.5 h-3.5" /> SAVE SLOT #01: CONCLUÍDO
             </span>
             <span className="text-stone-400 tracking-wider">12.12.2026 // 10:30H</span>
           </div>
 
           {/* Banner Level Up */}
           {isAccepted && (
-            <div className="bg-gold-500 text-black border-2 border-black pixel-shadow py-2.5 px-3 text-center mb-5 text-[10px] sm:text-xs tracking-wider animate-pulse">
+            <div className="bg-gold-500 text-black border-2 border-black pixel-shadow py-2 px-2.5 text-center mb-4 sm:mb-5 text-[9px] sm:text-xs tracking-wider animate-pulse">
               ★ LEVEL UP! PRESENÇA GARANTIDA PARA 12/12/2026 ★
             </div>
           )}
 
           {/* Ficha de Personagem (Player Pass VIP) com Moldura de Ouro */}
-          <div className="relative bg-[#252836] border-4 border-[#ab732c] rounded-xl p-5 sm:p-8 pixel-shadow-gold text-white space-y-5 overflow-hidden">
+          <div className="relative bg-[#252836] border-4 border-[#ab732c] rounded-xl p-3.5 sm:p-8 pixel-shadow-gold text-white space-y-4 sm:space-y-5 overflow-hidden">
             {/* Efeito Scanlines */}
             <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px]" />
 
             {/* Carimbo Pixelado atravessado */}
             <div
-              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none border-4 px-6 py-2 text-xl sm:text-3xl font-bold tracking-widest uppercase rotate-[-15deg] opacity-90 z-20 ${
+              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none border-4 px-4 sm:px-6 py-1.5 sm:py-2 text-base sm:text-3xl font-bold tracking-widest uppercase rotate-[-15deg] opacity-90 z-20 ${
                 isAccepted
                   ? "border-emerald-400 text-emerald-400 bg-emerald-950/85 shadow-[0_0_25px_rgba(52,211,153,0.6)]"
                   : "border-red-500 text-red-500 bg-red-950/85 shadow-[0_0_25px_rgba(239,68,68,0.6)]"
@@ -248,7 +251,7 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
             <div className="bg-[#1a1c23] border-2 border-black p-3.5 rounded text-[10px] space-y-1.5 text-stone-300">
               <div className="flex items-center justify-between text-gold-300 border-b border-stone-700 pb-1">
                 <span>EVENTO:</span>
-                <span>CASAMENTO RIAN & JENIFFER</span>
+                <span>CASAMENTO JENIFFER & RIAN</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>DATA & HORA:</span>
@@ -290,14 +293,14 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
   // =========================================================================
   return (
     <div
-      className={`w-full max-w-[720px] mx-auto p-2 sm:p-4 font-pixel select-none ${
+      className={`w-full max-w-[720px] mx-auto px-1 sm:px-4 py-2 font-pixel select-none ${
         isShaking ? "screen-shake" : ""
       }`}
     >
       {/* Moldura de Console GBA / Arcade 16-Bit */}
-      <div className="relative bg-[#252730] border-4 border-black pixel-shadow-lg rounded-2xl sm:rounded-3xl p-3 sm:p-5 overflow-hidden">
+      <div className="relative bg-[#252730] border-4 border-black pixel-shadow-lg rounded-xl sm:rounded-3xl p-2.5 sm:p-5 overflow-hidden">
         {/* Top Header do Console */}
-        <div className="flex items-center justify-between pb-2 mb-3 border-b-2 border-black text-[#d7aa5f] text-[9px] sm:text-[11px]">
+        <div className="flex items-center justify-between pb-2 mb-3 border-b-2 border-black text-[#d7aa5f] text-[8px] sm:text-[11px]">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 border border-black inline-block animate-pulse" />
             <span>THE WEDDING QUEST // 12.12.2026</span>
@@ -348,6 +351,21 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
 
           {/* Sprites dos Noivos */}
           <div className="relative z-10 flex items-end justify-center gap-6 pb-2">
+            {/* Jeniffer */}
+            <div className="flex flex-col items-center">
+              <div className="text-[8px] text-pink-300 bg-black/80 px-1 border border-black mb-1">
+                JENIFFER
+              </div>
+              <div className="w-12 h-14 bg-white border-2 border-black pixel-shadow-sm rounded flex flex-col items-center justify-between p-1">
+                <div className="w-6 h-6 bg-[#fcd5b5] border border-black rounded-sm flex items-center justify-center text-xs">
+                  👰
+                </div>
+                <div className="w-9 h-5 bg-white border border-black" />
+              </div>
+            </div>
+
+            <div className="text-red-500 animate-bounce text-base pb-3">💖</div>
+
             {/* Rian */}
             <div className="flex flex-col items-center">
               <div className="text-[8px] text-gold-300 bg-black/80 px-1 border border-black mb-1">
@@ -362,21 +380,6 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
                 </div>
               </div>
             </div>
-
-            <div className="text-red-500 animate-bounce text-base pb-3">💖</div>
-
-            {/* Jeniffer */}
-            <div className="flex flex-col items-center">
-              <div className="text-[8px] text-pink-300 bg-black/80 px-1 border border-black mb-1">
-                JENIFFER
-              </div>
-              <div className="w-12 h-14 bg-white border-2 border-black pixel-shadow-sm rounded flex flex-col items-center justify-between p-1">
-                <div className="w-6 h-6 bg-[#fcd5b5] border border-black rounded-sm flex items-center justify-center text-xs">
-                  👰
-                </div>
-                <div className="w-9 h-5 bg-white border border-black" />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -387,8 +390,8 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
         >
           <div className="absolute inset-1 border border-white/40 pointer-events-none" />
 
-          <div className="relative z-10 inline-block self-start -mt-6 sm:-mt-7 bg-[#d7aa5f] text-black border-2 border-black px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold tracking-wider">
-            NOIVO RIAN & NOIVA JENIFFER:
+          <div className="relative z-10 inline-block self-start -mt-6 sm:-mt-7 bg-[#d7aa5f] text-black border-2 border-black px-2.5 py-0.5 text-[8px] sm:text-[10px] font-bold tracking-wider">
+            NOIVA JENIFFER & NOIVO RIAN:
           </div>
 
           <div className="relative z-10 text-white text-[10px] sm:text-xs leading-relaxed tracking-wide mt-1">
@@ -566,7 +569,7 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
                 VOCÊ TEM CERTEZA QUE DESEJA ABANDONAR A QUEST?
               </h3>
               <p className="text-[9px] text-stone-400 leading-relaxed">
-                Rian & Jeniffer gostariam muito de celebrar com você em 12/12/2026. Deseja mesmo confirmar ausência?
+                Jeniffer & Rian gostariam muito de celebrar com você em 12/12/2026. Deseja mesmo confirmar ausência?
               </p>
               <div className="flex flex-col gap-2 pt-2">
                 <button

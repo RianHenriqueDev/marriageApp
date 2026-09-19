@@ -86,8 +86,8 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
                 <span className="text-[8px] text-stone-400 tracking-widest uppercase block">
                   CAMPANHA MATRIMONIAL OFICIAL
                 </span>
-                <h1 className="text-lg font-extrabold text-gold-400 tracking-wide">
-                  RIAN & JENIFFER
+                <h1 className="text-base sm:text-lg font-extrabold text-gold-400 tracking-wide">
+                  JENIFFER & RIAN
                 </h1>
               </div>
 
@@ -109,13 +109,13 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
             {/* Sprites Pixel dos Noivos no Cartão */}
             <div className="my-3 flex items-center justify-center gap-4 py-2 bg-black/50 border border-stone-800 rounded-lg">
               <div className="text-center">
-                <span className="text-[7px] text-gold-300 block">NOIVO</span>
-                <span className="text-xl">🤵</span>
+                <span className="text-[7px] text-pink-300 block">NOIVA</span>
+                <span className="text-xl">👰</span>
               </div>
               <div className="text-red-500 animate-pulse text-sm">💖</div>
               <div className="text-center">
-                <span className="text-[7px] text-pink-300 block">NOIVA</span>
-                <span className="text-xl">👰</span>
+                <span className="text-[7px] text-gold-300 block">NOIVO</span>
+                <span className="text-xl">🤵</span>
               </div>
             </div>
 

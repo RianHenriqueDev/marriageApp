@@ -48,16 +48,16 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto w-full select-none">
+    <div className="max-w-2xl mx-auto w-full select-none px-1">
       {/* Moldura de Livro de Missões / Pergaminho Retrô */}
-      <div className="relative bg-[#fbf5e8] border-4 border-[#2b1810] shadow-[8px_8px_0px_0px_#111] rounded-2xl p-6 sm:p-10 text-[#2b1810] space-y-6">
+      <div className="relative bg-[#fbf5e8] border-4 border-[#2b1810] shadow-[8px_8px_0px_0px_#111] rounded-2xl p-4 sm:p-10 text-[#2b1810] space-y-4 sm:space-y-6">
         {/* Selo do Livro de Honra */}
         <div className="flex items-center justify-between border-b-4 border-[#2b1810] pb-3">
-          <div className="flex items-center gap-2 font-pixel text-[10px] sm:text-xs text-[#895525]">
+          <div className="flex items-center gap-2 font-pixel text-[9px] sm:text-xs text-[#895525]">
             <BookOpen className="w-4 h-4" />
             <span>LIVRO DE HONRA • CONVITE OFICIAL</span>
           </div>
-          <span className="font-pixel text-[9px] bg-[#d7aa5f] text-black px-2 py-0.5 border-2 border-black rounded">
+          <span className="font-pixel text-[8px] sm:text-[9px] bg-[#d7aa5f] text-black px-2 py-0.5 border-2 border-black rounded">
             12.12.2026
           </span>
         </div>

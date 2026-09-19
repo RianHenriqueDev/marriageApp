@@ -60,7 +60,7 @@ export function AdminLoginForm() {
             GAME MASTER ACCESS
           </h1>
           <p className="text-[9px] text-stone-400 font-sans">
-            Área restrita aos noivos Rian & Jeniffer. Autenticação obrigatória.
+            Área restrita aos noivos Jeniffer & Rian. Autenticação obrigatória.
           </p>
         </div>
 

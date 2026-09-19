@@ -62,7 +62,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     const path = guest.flowType === "GAMEPLAY" ? "c" : "convite";
     const url = `${window.location.origin}/${path}/${guest.token}`;
     const text = encodeURIComponent(
-      `Olá ${guest.name}! ⚔️💖\nVocê foi convocado(a) para a nossa Wedding Quest (Casamento de Rian & Jeniffer em 12/12/2026 às 10:30h)!\n\nAcesse o link exclusivo para confirmar sua presença e escolher suas opções na party:\n${url}\n\nEsperamos por você!`
+      `Olá ${guest.name}! ⚔️💖\nVocê foi convocado(a) para a nossa Wedding Quest (Casamento de Jeniffer & Rian em 12/12/2026 às 10:30h)!\n\nAcesse o link exclusivo para confirmar sua presença e escolher suas opções na party:\n${url}\n\nEsperamos por você!`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };

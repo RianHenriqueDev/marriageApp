@@ -19,7 +19,7 @@ export default function NotFound() {
         </div>
 
         <p className="text-[9px] text-stone-400">
-          Verifique o link enviado pelo casal ou consulte os Game Masters (Rian & Jeniffer).
+          Verifique o link enviado pelo casal ou consulte os Game Masters (Jeniffer & Rian).
         </p>
 
         <div className="pt-2 flex flex-col gap-2.5">

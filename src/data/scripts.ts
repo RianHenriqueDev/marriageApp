@@ -197,7 +197,7 @@ const M_SCRIPTS: Omit<ScriptLine, "gender">[] = [
   {
     id: "m_14",
     title: "Cavalheiro da Távola",
-    initialMessage: "Saudações, nobre lorde! Sua honra e amizade iluminam o reino de Rian & Jeniffer neste grande dia.",
+    initialMessage: "Saudações, nobre lorde! Sua honra e amizade iluminam o reino de Jeniffer & Rian neste grande dia.",
     choiceA: "Pela honra e pela celebração!",
     choiceB: "Levarei meus melhores votos!",
     reactionA: "O reino se alegra com a sua bravura e carinho!",
@@ -355,7 +355,7 @@ const F_SCRIPTS: Omit<ScriptLine, "gender">[] = [
   {
     id: "f_11",
     title: "Manhã de Sol em Ribeirão",
-    initialMessage: "Sábado ensolarado, 10:30h, pessoas queridas e o casamento de Rian & Jeniffer. Perfeição pura!",
+    initialMessage: "Sábado ensolarado, 10:30h, pessoas queridas e o casamento de Jeniffer & Rian. Perfeição pura!",
     choiceA: "Cenário perfeito pra celebrar!",
     choiceB: "Já anotei tudo no calendário!",
     reactionA: "Vai ser um dia de cinema! Deus preparou cada detalhe.",

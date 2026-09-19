@@ -92,30 +92,30 @@ export default function RetroTitleScreen() {
 
         {/* Logotipo Retrô */}
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-gold-400 tracking-wider text-shadow-pixel leading-tight drop-shadow-[4px_4px_0px_#000]">
+          <h1 className="text-xl sm:text-4xl md:text-5xl font-extrabold text-gold-400 tracking-wider text-shadow-pixel leading-tight drop-shadow-[4px_4px_0px_#000]">
             THE WEDDING QUEST
           </h1>
-          <div className="text-sm sm:text-xl text-white font-bold tracking-widest text-[#f6eed9] flex items-center justify-center gap-2">
-            <span>RIAN</span>
-            <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-bounce" />
+          <div className="text-xs sm:text-xl text-white font-bold tracking-widest text-[#f6eed9] flex flex-wrap items-center justify-center gap-2">
             <span>JENIFFER</span>
+            <Heart className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-red-500 fill-red-500 animate-bounce" />
+            <span>RIAN</span>
           </div>
         </div>
 
         {/* Contador Regressivo Retrô */}
-        <div className="w-full max-w-md bg-[#11141a]/90 border-4 border-black pixel-shadow p-3 rounded-xl">
-          <div className="text-[9px] text-gold-400 mb-2 border-b border-stone-800 pb-1">
+        <div className="w-full max-w-md bg-[#11141a]/90 border-4 border-black pixel-shadow p-2.5 sm:p-3 rounded-xl overflow-hidden">
+          <div className="text-[8px] sm:text-[9px] text-gold-400 mb-2 border-b border-stone-800 pb-1">
             TEMPO RESTANTE ATÉ A CERIMÔNIA:
           </div>
           <Countdown />
         </div>
 
         {/* Botão de PRESS START Animado */}
-        <div className="pt-4 flex flex-col items-center gap-3">
+        <div className="pt-2 sm:pt-4 flex flex-col items-center gap-3 w-full px-2">
           <button
             type="button"
             onClick={handlePressStart}
-            className="px-8 py-4 bg-[#c79038] hover:bg-[#d7aa5f] text-black border-4 border-black pixel-shadow-lg text-xs sm:text-sm font-extrabold tracking-widest animate-pulse hover:animate-none active:translate-x-1 active:translate-y-1 active:shadow-none cursor-pointer flex items-center gap-2"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#c79038] hover:bg-[#d7aa5f] text-black border-4 border-black pixel-shadow-lg text-xs sm:text-sm font-extrabold tracking-widest animate-pulse hover:animate-none active:translate-x-1 active:translate-y-1 active:shadow-none cursor-pointer flex items-center justify-center gap-2"
           >
             <Play className="w-4 h-4 fill-black" />
             <span>PRESS START</span>
@@ -124,7 +124,7 @@ export default function RetroTitleScreen() {
           {savedToken ? (
             <Link
               href={`/c/${savedToken}`}
-              className="text-[9px] sm:text-[10px] text-emerald-400 hover:text-emerald-300 underline"
+              className="text-[8px] sm:text-[10px] text-emerald-400 hover:text-emerald-300 underline text-center max-w-full break-words"
             >
               [ CONTINUE: CARREGAR PASSE VIP SALVO ]
             </Link>
@@ -132,7 +132,7 @@ export default function RetroTitleScreen() {
             <button
               type="button"
               onClick={() => setIsLoadModalOpen(true)}
-              className="text-[8px] sm:text-[9px] text-stone-400 hover:text-gold-300 underline cursor-pointer"
+              className="text-[8px] sm:text-[9px] text-stone-400 hover:text-gold-300 underline cursor-pointer text-center"
             >
               [ INSERIR CÓDIGO DO CONVITE MANUALMENTE ]
             </button>
@@ -141,7 +141,7 @@ export default function RetroTitleScreen() {
       </section>
 
       {/* Rodapé Retrô */}
-      <footer className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t-2 border-black/80 text-[8px] sm:text-[9px] text-stone-500">
+      <footer className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t-2 border-black/80 text-[7px] sm:text-[9px] text-stone-500 text-center sm:text-left">
         <div>1º CARTÓRIO DE REGISTRO CIVIL • RIBEIRÃO PRETO - SP</div>
         <Link
           href="/admin"

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
       title: `Convite de Casamento para ${guest.name} | 12.12.2026`,
-      description: `${guest.name}, você foi convidado especial para o nosso casamento! Confirme sua presença.`,
+      description: `${guest.name}, você foi convidado especial para o casamento de Jeniffer & Rian! Confirme sua presença.`,
     };
   } catch {
     return {
@@ -59,7 +59,7 @@ export default async function GuestInvitationPage({ params }: PageProps) {
       className={`min-h-screen relative flex flex-col justify-between p-3 sm:p-6 ${
         isGameplay
           ? "bg-[#0b0c10] text-stone-200"
-          : "bg-gradient-to-b from-[#fdfcf8] to-[#f7f3ec]"
+          : "bg-gradient-to-b from-[#161311] via-[#241e1a] to-[#120f0e] text-stone-200"
       }`}
     >
       {/* Background Decorativo apenas no modo Clássico */}
@@ -71,17 +71,17 @@ export default async function GuestInvitationPage({ params }: PageProps) {
       )}
 
       {/* Top Header */}
-      <header className="max-w-xl mx-auto w-full flex items-center justify-between pb-4">
+      <header className="max-w-xl mx-auto w-full flex items-center justify-between pb-3 sm:pb-4 px-1">
         <Link
           href="/"
           className={`inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase transition-colors ${
             isGameplay
-              ? "text-gold-400 hover:text-white font-pixel text-[10px]"
-              : "text-stone-500 hover:text-emeraldDeep"
+              ? "text-gold-400 hover:text-white font-pixel text-[9px] sm:text-[10px]"
+              : "text-stone-400 hover:text-white text-[11px]"
           }`}
         >
-          <Heart className="w-4 h-4 text-gold-500 fill-gold-400" />
-          Rian & Jeniffer • 12/12/2026
+          <Heart className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-gold-500 fill-gold-400" />
+          Jeniffer & Rian • 12/12/2026
         </Link>
       </header>
 

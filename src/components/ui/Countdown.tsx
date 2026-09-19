@@ -62,16 +62,16 @@ export function Countdown() {
   ];
 
   return (
-    <div className="flex justify-center items-center gap-3 sm:gap-6 py-4">
+    <div className="flex justify-center items-center gap-1.5 sm:gap-4 py-2 sm:py-4">
       {items.map((item, idx) => (
         <div
           key={idx}
-          className="flex flex-col items-center bg-white/80 border border-gold-200/60 shadow-sm backdrop-blur-sm rounded-2xl px-3 sm:px-5 py-3 min-w-[65px] sm:min-w-[85px] transition-transform hover:scale-105 duration-300"
+          className="flex flex-col items-center bg-[#181d27] border-2 border-black pixel-shadow-sm rounded-lg px-2 sm:px-4 py-2 min-w-[54px] sm:min-w-[75px] transition-transform"
         >
-          <span className="font-serif text-2xl sm:text-4xl font-bold text-emeraldDeep tracking-tight">
+          <span className="font-pixel text-base sm:text-2xl font-bold text-gold-400 tracking-tight">
             {String(item.value).padStart(2, "0")}
           </span>
-          <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-gold-700 mt-1 uppercase">
+          <span className="font-pixel text-[7px] sm:text-[9px] font-semibold tracking-wider text-stone-400 mt-1 uppercase">
             {item.label}
           </span>
         </div>

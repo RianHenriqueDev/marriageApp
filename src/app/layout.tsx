@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 
@@ -21,11 +21,17 @@ const pixelFont = Press_Start_2P({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  title: "Casamento dos Nossos Sonhos | 12.12.2026",
+  title: "Casamento Jeniffer & Rian | 12.12.2026",
   description: "Celebre conosco este momento inesquecível. Confirme sua presença para 12 de Dezembro de 2026.",
   openGraph: {
-    title: "Casamento dos Nossos Sonhos | 12.12.2026",
+    title: "Casamento Jeniffer & Rian | 12.12.2026",
     description: "Você foi convidado para celebrar o nosso amor!",
     type: "website",
   },
