@@ -136,6 +136,24 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
             </div>
           </div>
 
+          {guest && (
+            <div>
+              <label className="block text-gold-300 font-bold mb-1">
+                STATUS DE PRESENÇA NAS FASES
+              </label>
+              <select
+                name="attendance"
+                defaultValue={guest.attendance || "BOTH"}
+                className="w-full px-2.5 py-2 bg-black border-2 border-stone-700 rounded text-stone-200 text-[9px] focus:outline-none focus:border-gold-400 font-pixel"
+              >
+                <option value="BOTH">⚔️ FASE 1 & 2 (Cartório + Banquete JP Steakhouse)</option>
+                <option value="ONLY_CEREMONY">📜 FASE 1 (Apenas Cartório / 0 Gold)</option>
+                <option value="ONLY_DINNER">🥩 FASE 2 (Apenas JP Steakhouse / Paga seu Loot)</option>
+                <option value="NONE">❌ NENHUMA (Recusou)</option>
+              </select>
+            </div>
+          )}
+
           <div>
             <label className="block text-gold-300 font-bold mb-1">
               ROTEIRO (DEIXE VAZIO PARA SORTEAR 1 DOS 30 AUTOMÁTICO)

@@ -110,8 +110,29 @@ export default function RetroTitleScreen() {
           <Countdown />
         </div>
 
+        {/* Resumo das Duas Fases da Missão Retrô */}
+        <div className="w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
+          <div className="bg-[#11141a]/95 border-2 border-amber-600/80 p-2.5 rounded-lg pixel-shadow-sm space-y-1">
+            <div className="flex items-center justify-between text-[8px] font-bold text-amber-400">
+              <span>📜 FASE 1: O JURAMENTO</span>
+              <span className="text-[7.5px] bg-emerald-950 text-emerald-300 px-1 rounded">0 GOLD</span>
+            </div>
+            <div className="text-[8.5px] font-bold text-white">Cartório de Registro Civil</div>
+            <div className="text-[7.5px] text-stone-400">12/12/2026 • 10:30h • R. Visconde de Inhaúma, 1315</div>
+          </div>
+
+          <div className="bg-[#11141a]/95 border-2 border-red-600/80 p-2.5 rounded-lg pixel-shadow-sm space-y-1">
+            <div className="flex items-center justify-between text-[8px] font-bold text-red-400">
+              <span>🥩 FASE 2: GRANDE ALMOÇO</span>
+              <span className="text-[7.5px] bg-yellow-950 text-yellow-300 px-1 rounded">PAGA SEU LOOT</span>
+            </div>
+            <div className="text-[8.5px] font-bold text-white">JP Steakhouse (~12:30h)</div>
+            <div className="text-[7.5px] text-stone-400">Av. Alice de Moura Bragheto, 76 (Rodízio individual por comanda)</div>
+          </div>
+        </div>
+
         {/* Botão de PRESS START Animado */}
-        <div className="pt-2 sm:pt-4 flex flex-col items-center gap-3 w-full px-2">
+        <div className="pt-2 sm:pt-3 flex flex-col items-center gap-3 w-full px-2">
           <button
             type="button"
             onClick={handlePressStart}

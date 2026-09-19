@@ -97,6 +97,11 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  // Contadores de Presença por Fase
+  const bothCount = acceptedGuests.filter((g) => g.attendance === "BOTH").length;
+  const ceremonyCount = acceptedGuests.filter((g) => g.attendance === "ONLY_CEREMONY").length;
+  const dinnerCount = acceptedGuests.filter((g) => g.attendance === "ONLY_DINNER").length;
+
   return (
     <div className="space-y-6">
       {/* HUD DE RECURSOS (MÉTRICAS RETRÔ) */}
@@ -122,9 +127,10 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
           <p className="text-2xl font-bold text-emerald-400 mt-2">
             {totalConfirmedPeople}
           </p>
-          <span className="text-[8px] text-stone-400">
-            {acceptedGuests.length} titulares + buffs
-          </span>
+          <div className="text-[8px] text-stone-300 mt-1 flex flex-col gap-0.5">
+            <span>⚔️ Cartório + Almoço: {bothCount}</span>
+            <span>📜 Só Cartório: {ceremonyCount} | 🥩 Só JP Steakhouse: {dinnerCount}</span>
+          </div>
         </div>
 
         {/* Quests Pendentes */}
@@ -266,21 +272,34 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                       </td>
 
                       <td className="px-2.5 py-3">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[8px] font-bold px-2 py-0.5 rounded border border-black ${
-                            guest.status === "ACCEPTED"
-                              ? "bg-emerald-950 text-emerald-400 border-emerald-600"
+                        <div className="flex flex-col gap-1 items-start">
+                          <span
+                            className={`inline-flex items-center gap-1 text-[8px] font-bold px-2 py-0.5 rounded border border-black ${
+                              guest.status === "ACCEPTED"
+                                ? "bg-emerald-950 text-emerald-400 border-emerald-600"
+                                : guest.status === "DECLINED"
+                                ? "bg-red-950 text-red-400 border-red-600"
+                                : "bg-amber-950 text-amber-400 border-amber-600"
+                            }`}
+                          >
+                            {guest.status === "ACCEPTED"
+                              ? "HP 100% (CONFIRMADO)"
                               : guest.status === "DECLINED"
-                              ? "bg-red-950 text-red-400 border-red-600"
-                              : "bg-amber-950 text-amber-400 border-amber-600"
-                          }`}
-                        >
-                          {guest.status === "ACCEPTED"
-                            ? "HP 100% (CONFIRMADO)"
-                            : guest.status === "DECLINED"
-                            ? "HP 0% (RECUSADO)"
-                            : "HP 50% (PENDENTE)"}
-                        </span>
+                              ? "HP 0% (RECUSADO)"
+                              : "HP 50% (PENDENTE)"}
+                          </span>
+                          {guest.status === "ACCEPTED" && (
+                            <span className="text-[7.5px] px-1.5 py-0.5 rounded bg-black/60 border border-stone-700 text-gold-300">
+                              {guest.attendance === "BOTH"
+                                ? "⚔️ Cartório + JP Steak"
+                                : guest.attendance === "ONLY_CEREMONY"
+                                ? "📜 Só Cartório"
+                                : guest.attendance === "ONLY_DINNER"
+                                ? "🥩 Só JP Steak"
+                                : "Nenhum"}
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       <td className="px-2 py-3 text-center font-bold text-gold-300">

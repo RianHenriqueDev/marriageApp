@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
-import { Download, X, Calendar, MapPin, Sparkles, Heart } from "lucide-react";
+import { Download, X, Calendar, Sparkles, Heart } from "lucide-react";
 
 interface InviteImageModalProps {
   guest: {
@@ -119,18 +119,27 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
               </div>
             </div>
 
-            {/* Informações da Cerimônia */}
-            <div className="p-3 rounded-lg bg-black/60 border border-gold-400/60 space-y-1.5 text-[8px]">
-              <div className="flex items-center justify-center gap-1 text-gold-300 font-bold">
+            {/* Informações das Duas Fases */}
+            <div className="p-2.5 rounded-lg bg-black/60 border border-gold-400/60 space-y-1.5 text-[7.5px]">
+              <div className="flex items-center justify-center gap-1 text-gold-300 font-bold text-[8px]">
                 <Calendar className="w-3.5 h-3.5 text-gold-400" />
-                12 DE DEZEMBRO DE 2026 • 10:30H
+                12 DE DEZEMBRO DE 2026
               </div>
-              <div className="flex flex-col items-center justify-center text-stone-300">
-                <div className="flex items-center gap-1 font-bold text-white">
-                  <MapPin className="w-3 h-3 text-gold-400" />
-                  1º CARTÓRIO DE REGISTRO CIVIL
+
+              {/* Fase 1 */}
+              <div className="border-t border-stone-800 pt-1">
+                <div className="text-amber-400 font-bold flex items-center justify-center gap-1">
+                  📜 FASE 1: O JURAMENTO (10:30H)
                 </div>
-                <span className="text-[7px] text-stone-400">R. Visc. de Inhaúma, 1315 - Ribeirão Preto</span>
+                <div className="text-stone-300">1º Cartório de Registro Civil • 0 Gold</div>
+              </div>
+
+              {/* Fase 2 */}
+              <div className="border-t border-stone-800 pt-1">
+                <div className="text-red-400 font-bold flex items-center justify-center gap-1">
+                  🥩 FASE 2: O GRANDE ALMOÇO
+                </div>
+                <div className="text-stone-300">JP Steakhouse (Almoço individual por comanda)</div>
               </div>
             </div>
 

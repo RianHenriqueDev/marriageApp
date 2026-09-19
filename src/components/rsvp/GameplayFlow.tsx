@@ -7,6 +7,8 @@ import { triggerCelebration } from "@/lib/confetti";
 import { retroSound } from "@/lib/retroAudio";
 import { Volume2, VolumeX, Heart, Sparkles } from "lucide-react";
 
+import { PhaseAttendance, RsvpStatus } from "@prisma/client";
+
 interface GameplayFlowProps {
   guest: {
     token: string;
@@ -14,16 +16,23 @@ interface GameplayFlowProps {
     gender: "M" | "F";
     category?: string;
     scriptId?: string | null;
-    status: "PENDING" | "ACCEPTED" | "DECLINED";
+    status: RsvpStatus;
     allowedPlusOnes: number;
     confirmedPlusOnes: number;
     customNote?: string | null;
+    attendance?: PhaseAttendance;
   };
 }
 
 export function GameplayFlow({ guest }: GameplayFlowProps) {
   const script = getScriptForGuest(guest.scriptId, guest.gender);
-  const [currentStatus, setCurrentStatus] = useState(guest.status);
+  const [currentStatus, setCurrentStatus] = useState<RsvpStatus>(guest.status);
+  const [currentAttendance, setCurrentAttendance] = useState<PhaseAttendance>(
+    guest.attendance || PhaseAttendance.BOTH
+  );
+  const [selectedPhase, setSelectedPhase] = useState<PhaseAttendance>(
+    guest.attendance && guest.attendance !== "NONE" ? guest.attendance : PhaseAttendance.BOTH
+  );
   const [plusOnes, setPlusOnes] = useState(guest.confirmedPlusOnes || 0);
 
   // Áudio
@@ -132,17 +141,20 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
   };
 
   // Confirmação final da Quest
-  const handleConfirm = async (status: "ACCEPTED" | "DECLINED") => {
+  const handleConfirm = async (status: RsvpStatus, attendancePhase?: PhaseAttendance) => {
     setLoading(true);
+    const targetAttendance = status === "DECLINED" ? PhaseAttendance.NONE : (attendancePhase || selectedPhase);
     const res = await submitRsvp({
       token: guest.token,
       status,
       confirmedPlusOnes: status === "ACCEPTED" ? plusOnes : 0,
+      attendance: targetAttendance,
     });
     setLoading(false);
 
     if (res.success) {
       setCurrentStatus(status);
+      setCurrentAttendance(targetAttendance);
       setShowRunConfirm(false);
 
       if (status === "ACCEPTED") {
@@ -247,24 +259,62 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
               </div>
             </div>
 
-            {/* Informações Oficiais da Cerimônia */}
-            <div className="bg-[#1a1c23] border-2 border-black p-3.5 rounded text-[10px] space-y-1.5 text-stone-300">
+            {/* Informações Oficiais das Fases da Quest */}
+            <div className="bg-[#1a1c23] border-2 border-black p-3.5 rounded text-[10px] space-y-2 text-stone-300">
               <div className="flex items-center justify-between text-gold-300 border-b border-stone-700 pb-1">
-                <span>EVENTO:</span>
+                <span>EVENTO PRINCIPAL:</span>
                 <span>CASAMENTO JENIFFER & RIAN</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>DATA & HORA:</span>
-                <span>12/12/2026 • 10:30H</span>
+                <span>DATA:</span>
+                <span>12/12/2026 (SÁBADO)</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span>LOCAL:</span>
-                <span className="text-right">1º CARTÓRIO - RIBEIRÃO PRETO</span>
+
+              {/* FASE 1 */}
+              <div className="p-2 rounded bg-black/40 border border-stone-700 space-y-1">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="text-amber-400 flex items-center gap-1">
+                    📜 FASE 1: O JURAMENTO SOLENE
+                  </span>
+                  <span className="text-[8px] bg-emerald-950 text-emerald-300 px-1.5 py-0.2 rounded border border-emerald-700">
+                    0 GOLD (GRÁTIS)
+                  </span>
+                </div>
+                <div className="text-[8.5px] text-stone-300">
+                  10:30h • 1º Cartório de Registro Civil
+                </div>
+                <div className="text-[8px] text-stone-500">
+                  R. Visconde de Inhaúma, 1315 - Ribeirão Preto
+                </div>
+                <div className="text-[8px] text-amber-300">
+                  Status: {currentAttendance === "BOTH" || currentAttendance === "ONLY_CEREMONY" ? "✅ CONFIRMADO" : "❌ NÃO PARTICIPARÁ"}
+                </div>
               </div>
-              <div className="flex items-center justify-between text-stone-400 text-[9px]">
-                <span>ENDEREÇO:</span>
-                <span>R. Visconde de Inhaúma, 1315</span>
+
+              {/* FASE 2 */}
+              <div className="p-2 rounded bg-black/40 border border-stone-700 space-y-1">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="text-red-400 flex items-center gap-1">
+                    🥩 FASE 2: O GRANDE ALMOÇO NA TAVERNA
+                  </span>
+                  <span className="text-[8px] bg-yellow-950 text-yellow-300 px-1.5 py-0.2 rounded border border-yellow-700">
+                    PAGA SEU LOOT
+                  </span>
+                </div>
+                <div className="text-[8.5px] text-stone-300">
+                  Almoço após a cerimônia (~12:30h) • Churrascaria JP Steakhouse
+                </div>
+                <div className="text-[8px] text-stone-500">
+                  Av. Alice de Moura Bragheto, 76 - City Ribeirão
+                </div>
+                <div className="text-[8px] text-yellow-400 italic">
+                  💡 Regra de Ouro: O noivo gastou todo o ouro nas alianças! Rodízio de almoço individual por comanda.
+                </div>
+                <div className="text-[8px] text-red-300 font-bold">
+                  Status: {currentAttendance === "BOTH" || currentAttendance === "ONLY_DINNER" ? "✅ CONFIRMADO NO ALMOÇO" : "❌ NÃO PARTICIPARÁ"}
+                </div>
               </div>
+
               {isAccepted && plusOnes > 0 && (
                 <div className="flex items-center justify-between text-emerald-400 pt-1 border-t border-stone-700">
                   <span>PARTY BUFF:</span>
@@ -280,7 +330,7 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
 
             {/* Informação de Save Travado */}
             <div className="pt-2 text-center text-[9px] text-stone-400">
-              🔒 TICKET VIP BLOQUEADO NO CARTÓRIO • APRESENTE SEU NOME NA ENTRADA
+              🔒 TICKET VIP BLOQUEADO NO CARTÓRIO & TAVERNA • APRESENTE SEU NOME NA ENTRADA
             </div>
           </div>
         </div>
@@ -443,118 +493,207 @@ export function GameplayFlow({ guest }: GameplayFlowProps) {
             </div>
           </div>
         ) : (
-          /* FASE FINAL: MENU DE BATALHA COM ACEITAR E BOTÃO FUJÃO */
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            {/* Comandos Finais */}
-            <div className="bg-[#11141a] border-4 border-black p-3 rounded-xl pixel-shadow flex flex-col justify-between space-y-2">
+          /* FASE FINAL: MENU DE BATALHA COM SELEÇÃO DE EVENTO, ACEITAR E BOTÃO FUJÃO */
+          <div className="space-y-3 pt-1">
+            {/* Seletor de Fases da Campanha (Cartório & JP Steakhouse) */}
+            <div className="bg-[#11141a] border-4 border-black p-3 rounded-xl pixel-shadow space-y-2">
               <div className="text-[9px] text-gold-400 border-b border-stone-700 pb-1 flex justify-between items-center">
-                <span>COMANDO FINAL DA QUEST:</span>
-                <span className="text-[8px] text-emerald-400">DECISÃO</span>
+                <span>SELECIONE AS FASES DA QUEST:</span>
+                <span className="text-[8px] text-amber-300">LOGÍSTICA & LOOT</span>
               </div>
 
-              <div className="space-y-2 pt-1">
-                {/* Botão Aceitar Presença */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                {/* Opção 1: AMBAS AS FASES */}
                 <button
                   type="button"
-                  disabled={loading}
-                  onMouseEnter={() => {
-                    setCursorChoice("ACCEPT");
+                  onClick={() => {
+                    setSelectedPhase(PhaseAttendance.BOTH);
                     if (!audioMuted) retroSound.playSelect();
                   }}
-                  onClick={() => handleConfirm("ACCEPTED")}
-                  className="w-full text-left p-3 bg-emerald-800 hover:bg-emerald-700 text-white border-2 border-black pixel-shadow text-[10px] sm:text-xs flex items-center justify-between cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none transition-transform"
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.BOTH
+                      ? "bg-emerald-950 border-emerald-400 text-white pixel-shadow"
+                      : "bg-[#1a1c23] border-stone-800 text-stone-300 hover:border-stone-600"
+                  }`}
                 >
-                  <span className="flex items-center gap-1.5">
-                    <span className={cursorChoice === "ACCEPT" ? "text-gold-300" : "opacity-0"}>►</span>
-                    <span>CONFIRMAR PRESENÇA!</span>
-                  </span>
-                  <span className="text-[9px] bg-black/40 px-1.5 py-0.5 rounded text-gold-300">
-                    {loading ? "..." : "[ SIM ]"}
-                  </span>
+                  <div className="text-[9.5px] font-bold text-emerald-400 flex items-center justify-between">
+                    <span>⚔️ COMBO TOTAL</span>
+                    <span className="text-[8px]">{selectedPhase === PhaseAttendance.BOTH ? "● ATIVO" : "○"}</span>
+                  </div>
+                  <div className="text-[8.5px] font-bold mt-1">Cartório + JP Steakhouse</div>
+                  <div className="text-[7.5px] text-stone-400 mt-1 leading-tight">
+                    Juramento oficial + Banquete na Taverna
+                  </div>
                 </button>
 
-                {/* Botão Fujão (Recusar) */}
-                <div
-                  style={{
-                    transform: `translate(${runButtonOffset.x}px, ${runButtonOffset.y}px)`,
-                    transition: "transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                {/* Opção 2: APENAS CARTÓRIO */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPhase(PhaseAttendance.ONLY_CEREMONY);
+                    if (!audioMuted) retroSound.playSelect();
                   }}
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.ONLY_CEREMONY
+                      ? "bg-amber-950 border-amber-400 text-white pixel-shadow"
+                      : "bg-[#1a1c23] border-stone-800 text-stone-300 hover:border-stone-600"
+                  }`}
                 >
-                  <button
-                    type="button"
-                    onMouseEnter={() => {
-                      setCursorChoice("RUN");
-                      handleRunDodge();
-                    }}
-                    onTouchStart={() => {
-                      setCursorChoice("RUN");
-                      handleRunDodge();
-                    }}
-                    onClick={handleRunDodge}
-                    className="w-full text-left p-2.5 bg-stone-700 hover:bg-red-800 text-stone-300 hover:text-white border-2 border-black pixel-shadow text-[9px] sm:text-[10px] flex items-center justify-between cursor-pointer select-none active:translate-x-1 active:translate-y-1 active:shadow-none"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span className={cursorChoice === "RUN" ? "text-gold-300" : "opacity-0"}>►</span>
-                      <span>
-                        {dodgeCount === 0
-                          ? "FUGIR DA FESTA"
-                          : dodgeCount < 5
-                          ? `ERRO AO FUGIR (${5 - dodgeCount}x)`
-                          : "DESISTIR DEFINITIVO?"}
-                      </span>
-                    </span>
-                    <span className="text-[8px] bg-black/50 px-1 py-0.5 rounded text-stone-400">
-                      [ RUN ]
-                    </span>
-                  </button>
-                </div>
+                  <div className="text-[9.5px] font-bold text-amber-400 flex items-center justify-between">
+                    <span>📜 SÓ CARTÓRIO</span>
+                    <span className="text-[8px]">{selectedPhase === PhaseAttendance.ONLY_CEREMONY ? "● ATIVO" : "○"}</span>
+                  </div>
+                  <div className="text-[8.5px] font-bold mt-1">O Juramento Solene</div>
+                  <div className="text-[7.5px] text-stone-400 mt-1 leading-tight">
+                    Custo: 0 Gold (Presença moral e bênçãos)
+                  </div>
+                </button>
+
+                {/* Opção 3: APENAS ALMOÇO */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPhase(PhaseAttendance.ONLY_DINNER);
+                    if (!audioMuted) retroSound.playSelect();
+                  }}
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.ONLY_DINNER
+                      ? "bg-red-950 border-red-400 text-white pixel-shadow"
+                      : "bg-[#1a1c23] border-stone-800 text-stone-300 hover:border-stone-600"
+                  }`}
+                >
+                  <div className="text-[9.5px] font-bold text-red-400 flex items-center justify-between">
+                    <span>🥩 SÓ ALMOÇO</span>
+                    <span className="text-[8px]">{selectedPhase === PhaseAttendance.ONLY_DINNER ? "● ATIVO" : "○"}</span>
+                  </div>
+                  <div className="text-[8.5px] font-bold mt-1">Almoço no JP Steakhouse</div>
+                  <div className="text-[7.5px] text-stone-400 mt-1 leading-tight">
+                    Direto pro churrasco! (Cada um paga seu loot)
+                  </div>
+                </button>
               </div>
+
+              {/* Box Cômico de Lore: Cada Aventureiro Paga Seu Loot */}
+              {(selectedPhase === PhaseAttendance.BOTH || selectedPhase === PhaseAttendance.ONLY_DINNER) && (
+                <div className="bg-yellow-950/70 border-2 border-yellow-700/80 p-2 rounded text-[8px] sm:text-[8.5px] text-yellow-200 leading-relaxed">
+                  🍗 <span className="font-bold text-gold-300">REGRA DE OURO DA TAVERNA:</span> O noivo torrou todo o ouro nas alianças e poções! No grande almoço na <strong>Churrascaria JP Steakhouse</strong>, cada aventureiro/casal banca seu próprio loot (comanda individual de rodízio). Prepare o estômago para muito churrasco!
+                </div>
+              )}
             </div>
 
-            {/* Inventário de Acompanhantes */}
-            <div className="bg-[#11141a] border-4 border-black p-3 rounded-xl pixel-shadow flex flex-col justify-between">
-              <div>
-                <div className="text-[9px] text-gold-400 border-b border-stone-700 pb-1 flex justify-between items-center mb-2">
-                  <span>INVENTÁRIO / PARTY:</span>
-                  <span className="text-[8px] text-stone-400">VAGAS</span>
+            {/* Menu com Decisão e Vagas */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Comandos Finais */}
+              <div className="bg-[#11141a] border-4 border-black p-3 rounded-xl pixel-shadow flex flex-col justify-between space-y-2">
+                <div className="text-[9px] text-gold-400 border-b border-stone-700 pb-1 flex justify-between items-center">
+                  <span>COMANDO FINAL DA QUEST:</span>
+                  <span className="text-[8px] text-emerald-400">CONFIRMAR</span>
                 </div>
 
-                {guest.allowedPlusOnes > 0 ? (
-                  <div>
-                    <span className="text-[9px] text-stone-300 block mb-2">
-                      ACOMPANHANTES (MÁX: {guest.allowedPlusOnes}):
+                <div className="space-y-2 pt-1">
+                  {/* Botão Aceitar Presença */}
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onMouseEnter={() => {
+                      setCursorChoice("ACCEPT");
+                      if (!audioMuted) retroSound.playSelect();
+                    }}
+                    onClick={() => handleConfirm("ACCEPTED", selectedPhase)}
+                    className="w-full text-left p-3 bg-emerald-800 hover:bg-emerald-700 text-white border-2 border-black pixel-shadow text-[10px] sm:text-xs flex items-center justify-between cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none transition-transform"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className={cursorChoice === "ACCEPT" ? "text-gold-300" : "opacity-0"}>►</span>
+                      <span>CONFIRMAR PRESENÇA!</span>
                     </span>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {Array.from({ length: guest.allowedPlusOnes + 1 }).map((_, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            setPlusOnes(idx);
-                            if (!audioMuted) retroSound.playSelect();
-                          }}
-                          className={`py-1.5 border-2 border-black pixel-shadow-sm text-[9px] cursor-pointer transition-transform ${
-                            plusOnes === idx
-                              ? "bg-gold-500 text-black font-bold translate-x-0.5 translate-y-0.5 shadow-none"
-                              : "bg-stone-800 text-stone-300 hover:bg-stone-700"
-                          }`}
-                        >
-                          {idx === 0 ? "SÓ EU" : `+${idx}`}
-                        </button>
-                      ))}
-                    </div>
+                    <span className="text-[9px] bg-black/40 px-1.5 py-0.5 rounded text-gold-300">
+                      {loading ? "..." : "[ SIM ]"}
+                    </span>
+                  </button>
+
+                  {/* Botão Fujão (Recusar) */}
+                  <div
+                    style={{
+                      transform: `translate(${runButtonOffset.x}px, ${runButtonOffset.y}px)`,
+                      transition: "transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onMouseEnter={() => {
+                        setCursorChoice("RUN");
+                        handleRunDodge();
+                      }}
+                      onTouchStart={() => {
+                        setCursorChoice("RUN");
+                        handleRunDodge();
+                      }}
+                      onClick={handleRunDodge}
+                      className="w-full text-left p-2.5 bg-stone-700 hover:bg-red-800 text-stone-300 hover:text-white border-2 border-black pixel-shadow text-[9px] sm:text-[10px] flex items-center justify-between cursor-pointer select-none active:translate-x-1 active:translate-y-1 active:shadow-none"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span className={cursorChoice === "RUN" ? "text-gold-300" : "opacity-0"}>►</span>
+                        <span>
+                          {dodgeCount === 0
+                            ? "FUGIR DA FESTA"
+                            : dodgeCount < 5
+                            ? `ERRO AO FUGIR (${5 - dodgeCount}x)`
+                            : "DESISTIR DEFINITIVO?"}
+                        </span>
+                      </span>
+                      <span className="text-[8px] bg-black/50 px-1 py-0.5 rounded text-stone-400">
+                        [ RUN ]
+                      </span>
+                    </button>
                   </div>
-                ) : (
-                  <div className="text-[9px] text-stone-400 leading-relaxed pt-2">
-                    CONVITE INDIVIDUAL VIP.
-                    <br />
-                    SUA PRESENÇA É O BUFF DA NOSSA FESTA!
-                  </div>
-                )}
+                </div>
               </div>
 
-              <div className="text-[8px] text-stone-500 text-center pt-2">
-                SISTEMA ANTI-DESISTÊNCIA ATIVO
+              {/* Inventário de Acompanhantes */}
+              <div className="bg-[#11141a] border-4 border-black p-3 rounded-xl pixel-shadow flex flex-col justify-between">
+                <div>
+                  <div className="text-[9px] text-gold-400 border-b border-stone-700 pb-1 flex justify-between items-center mb-2">
+                    <span>INVENTÁRIO / PARTY:</span>
+                    <span className="text-[8px] text-stone-400">VAGAS</span>
+                  </div>
+
+                  {guest.allowedPlusOnes > 0 ? (
+                    <div>
+                      <span className="text-[9px] text-stone-300 block mb-2">
+                        ACOMPANHANTES (MÁX: {guest.allowedPlusOnes}):
+                      </span>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {Array.from({ length: guest.allowedPlusOnes + 1 }).map((_, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setPlusOnes(idx);
+                              if (!audioMuted) retroSound.playSelect();
+                            }}
+                            className={`py-1.5 border-2 border-black pixel-shadow-sm text-[9px] cursor-pointer transition-transform ${
+                              plusOnes === idx
+                                ? "bg-gold-500 text-black font-bold translate-x-0.5 translate-y-0.5 shadow-none"
+                                : "bg-stone-800 text-stone-300 hover:bg-stone-700"
+                            }`}
+                          >
+                            {idx === 0 ? "SÓ EU" : `+${idx}`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-[9px] text-stone-400 leading-relaxed pt-2">
+                      CONVITE INDIVIDUAL VIP.
+                      <br />
+                      SUA PRESENÇA É O BUFF DA NOSSA FESTA!
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-[8px] text-stone-500 text-center pt-2">
+                  SISTEMA ANTI-DESISTÊNCIA ATIVO
+                </div>
               </div>
             </div>
           </div>

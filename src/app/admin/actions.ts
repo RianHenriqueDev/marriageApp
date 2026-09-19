@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { generateToken } from "@/lib/utils";
-import { Category, FlowType, Gender } from "@prisma/client";
+import { Category, FlowType, Gender, PhaseAttendance } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -91,6 +91,8 @@ export async function updateGuest(id: string, formData: FormData) {
     const customNote = (formData.get("customNote") as string) || null;
     const allowedPlusOnes = parseInt((formData.get("allowedPlusOnes") as string) || "0", 10);
 
+    const attendance = (formData.get("attendance") as PhaseAttendance) || undefined;
+
     const guest = await prisma.guest.update({
       where: { id },
       data: {
@@ -101,6 +103,7 @@ export async function updateGuest(id: string, formData: FormData) {
         scriptId: scriptId || null,
         customNote: customNote ? customNote.trim() : null,
         allowedPlusOnes: isNaN(allowedPlusOnes) ? 0 : allowedPlusOnes,
+        ...(attendance ? { attendance } : {}),
       },
     });
 

@@ -4,40 +4,53 @@ import { useState } from "react";
 import { submitRsvp } from "@/app/actions/rsvp";
 import { triggerCelebration } from "@/lib/confetti";
 import { retroSound } from "@/lib/retroAudio";
-import { Check, Calendar, Users, Sparkles, BookOpen } from "lucide-react";
+import { Check, Users, Sparkles, BookOpen } from "lucide-react";
 import { Countdown } from "@/components/ui/Countdown";
+
+import { PhaseAttendance, RsvpStatus } from "@prisma/client";
 
 interface ClassicFlowProps {
   guest: {
     token: string;
     name: string;
-    status: "PENDING" | "ACCEPTED" | "DECLINED";
+    status: RsvpStatus;
     allowedPlusOnes: number;
     confirmedPlusOnes: number;
     customNote?: string | null;
+    attendance?: PhaseAttendance;
   };
 }
 
 export function ClassicFlow({ guest }: ClassicFlowProps) {
-  const [currentStatus, setCurrentStatus] = useState(guest.status);
+  const [currentStatus, setCurrentStatus] = useState<RsvpStatus>(guest.status);
+  const [currentAttendance, setCurrentAttendance] = useState<PhaseAttendance>(
+    guest.attendance || PhaseAttendance.BOTH
+  );
+  const [selectedPhase, setSelectedPhase] = useState<PhaseAttendance>(
+    guest.attendance && guest.attendance !== "NONE" ? guest.attendance : PhaseAttendance.BOTH
+  );
   const [plusOnes, setPlusOnes] = useState(guest.confirmedPlusOnes || 0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleConfirm = async (status: "ACCEPTED" | "DECLINED") => {
+  const handleConfirm = async (status: RsvpStatus, attendancePhase?: PhaseAttendance) => {
     setLoading(true);
     setErrorMessage(null);
+
+    const targetAttendance = status === "DECLINED" ? PhaseAttendance.NONE : (attendancePhase || selectedPhase);
 
     const res = await submitRsvp({
       token: guest.token,
       status,
       confirmedPlusOnes: status === "ACCEPTED" ? plusOnes : 0,
+      attendance: targetAttendance,
     });
 
     setLoading(false);
 
     if (res.success) {
       setCurrentStatus(status);
+      setCurrentAttendance(targetAttendance);
       if (status === "ACCEPTED") {
         retroSound.playVictory();
         triggerCelebration();
@@ -82,16 +95,48 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
           )}
         </div>
 
-        {/* Informações da Cerimônia com Contador */}
-        <div className="p-4 bg-white/70 border-2 border-[#2b1810] rounded-xl text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 font-pixel text-[10px] text-[#0a261f]">
-            <Calendar className="w-4 h-4 text-[#c79038]" />
-            12 DE DEZEMBRO DE 2026 • 10:30H
+        {/* Informações das Duas Etapas */}
+        <div className="space-y-3">
+          {/* Fase 1 */}
+          <div className="p-3.5 bg-white/80 border-2 border-[#2b1810] rounded-xl space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-pixel text-[9px] text-[#0a261f] font-bold">
+                📜 1ª FASE: O JURAMENTO SOLENE (CARTÓRIO)
+              </span>
+              <span className="font-pixel text-[8px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-400">
+                0 GOLD • GRÁTIS
+              </span>
+            </div>
+            <p className="text-xs text-stone-700 font-medium">
+              12/12/2026 às 10:30h • 1º Cartório de Registro Civil de Ribeirão Preto
+            </p>
+            <p className="text-[11px] text-stone-500">
+              Rua Visconde de Inhaúma, 1315 - Centro
+            </p>
           </div>
-          <p className="text-xs text-stone-600 font-medium">
-            1º Cartório de Registro Civil de Ribeirão Preto (Rua Visconde de Inhaúma, 1315)
-          </p>
-          <div className="pt-2">
+
+          {/* Fase 2 */}
+          <div className="p-3.5 bg-white/80 border-2 border-[#2b1810] rounded-xl space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-pixel text-[9px] text-[#895525] font-bold">
+                🥩 2ª FASE: O GRANDE ALMOÇO (JP STEAKHOUSE)
+              </span>
+              <span className="font-pixel text-[8px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-400">
+                PAGA SEU LOOT
+              </span>
+            </div>
+            <p className="text-xs text-stone-700 font-medium">
+              Almoço com rodízio após a cerimônia (~12:30h) • Churrascaria JP Steakhouse
+            </p>
+            <p className="text-[11px] text-stone-500">
+              Av. Alice de Moura Bragheto, 76 - City Ribeirão
+            </p>
+            <p className="text-[11px] text-[#895525] italic pt-1">
+              * O noivo gastou todo o ouro nas alianças! Rodízio de almoço individual por comanda (cada convidado/casal acerta o seu consumo).
+            </p>
+          </div>
+
+          <div className="pt-1">
             <Countdown />
           </div>
         </div>
@@ -115,6 +160,14 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
               Que grande alegria ter você conosco neste dia tão esperado!
               {plusOnes > 0 && ` Acompanhantes confirmados: +${plusOnes}.`}
             </p>
+            <div className="p-2 bg-emerald-100/70 rounded-lg text-xs font-bold text-emerald-900 mt-2">
+              Participação:{" "}
+              {currentAttendance === "BOTH"
+                ? "Cartório + Banquete JP Steakhouse"
+                : currentAttendance === "ONLY_CEREMONY"
+                ? "Apenas Cerimônia no Cartório"
+                : "Apenas Banquete no JP Steakhouse"}
+            </div>
             <p className="font-pixel text-[9px] text-emerald-800 pt-2">
               ★ SALVO NO LIVRO DE HONRA DO CASAMENTO ★
             </p>
@@ -129,13 +182,60 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
             </p>
             <button
               onClick={() => setCurrentStatus("PENDING")}
-              className="mt-3 text-xs text-[#895525] underline font-bold"
+              className="mt-3 text-xs text-[#895525] underline font-bold cursor-pointer"
             >
               Mudei de ideia, desejo confirmar presença
             </button>
           </div>
         ) : (
-          <div className="space-y-5 pt-2">
+          <div className="space-y-4 pt-2">
+            {/* Escolha das Fases */}
+            <div className="p-3 bg-[#ede2d4]/60 border-2 border-[#2b1810] rounded-xl space-y-2">
+              <label className="block font-pixel text-[9px] text-[#2b1810] font-bold">
+                SELECIONE EM QUAIS MOMENTOS VOCÊ ESTARÁ CONOSCO:
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhase(PhaseAttendance.BOTH)}
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.BOTH
+                      ? "bg-[#0a261f] text-white border-black shadow-[2px_2px_0px_0px_#000]"
+                      : "bg-white text-stone-800 border-stone-400 hover:bg-stone-50"
+                  }`}
+                >
+                  <div className="font-bold text-xs">Cartório + Almoço</div>
+                  <div className="text-[10px] opacity-80">Nos dois momentos</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhase(PhaseAttendance.ONLY_CEREMONY)}
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.ONLY_CEREMONY
+                      ? "bg-[#0a261f] text-white border-black shadow-[2px_2px_0px_0px_#000]"
+                      : "bg-white text-stone-800 border-stone-400 hover:bg-stone-50"
+                  }`}
+                >
+                  <div className="font-bold text-xs">Apenas Cartório</div>
+                  <div className="text-[10px] opacity-80">Cerimônia solene</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhase(PhaseAttendance.ONLY_DINNER)}
+                  className={`p-2.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
+                    selectedPhase === PhaseAttendance.ONLY_DINNER
+                      ? "bg-[#0a261f] text-white border-black shadow-[2px_2px_0px_0px_#000]"
+                      : "bg-white text-stone-800 border-stone-400 hover:bg-stone-50"
+                  }`}
+                >
+                  <div className="font-bold text-xs">Apenas JP Steakhouse</div>
+                  <div className="text-[10px] opacity-80">Banquete da Taverna</div>
+                </button>
+              </div>
+            </div>
+
             {/* Vagas de Acompanhante se houver */}
             {guest.allowedPlusOnes > 0 && (
               <div className="p-3.5 bg-[#ede2d4]/50 border-2 border-[#2b1810] rounded-xl">
@@ -154,7 +254,7 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
                       key={i}
                       type="button"
                       onClick={() => setPlusOnes(i)}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold border-2 border-black transition-all ${
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold border-2 border-black transition-all cursor-pointer ${
                         plusOnes === i
                           ? "bg-[#0a261f] text-white shadow-[2px_2px_0px_0px_#000]"
                           : "bg-white text-stone-700 hover:bg-stone-50"
@@ -172,7 +272,7 @@ export function ClassicFlow({ guest }: ClassicFlowProps) {
               <button
                 type="button"
                 disabled={loading}
-                onClick={() => handleConfirm("ACCEPTED")}
+                onClick={() => handleConfirm("ACCEPTED", selectedPhase)}
                 className="flex-1 py-4 px-6 rounded-xl bg-[#0a261f] text-[#f6eed9] font-pixel text-[11px] sm:text-xs border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:bg-[#133e33] active:translate-x-1 active:translate-y-1 active:shadow-none transition-transform flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-gold-400" />

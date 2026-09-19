@@ -99,6 +99,7 @@ export default async function GuestInvitationPage({ params }: PageProps) {
               allowedPlusOnes: guest.allowedPlusOnes,
               confirmedPlusOnes: guest.confirmedPlusOnes,
               customNote: guest.customNote,
+              attendance: guest.attendance,
             }}
           />
         ) : (
@@ -110,6 +111,7 @@ export default async function GuestInvitationPage({ params }: PageProps) {
               allowedPlusOnes: guest.allowedPlusOnes,
               confirmedPlusOnes: guest.confirmedPlusOnes,
               customNote: guest.customNote,
+              attendance: guest.attendance,
             }}
           />
         )}

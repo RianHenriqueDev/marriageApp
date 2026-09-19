@@ -3,14 +3,18 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+import { PhaseAttendance, RsvpStatus } from "@prisma/client";
+
 export async function submitRsvp({
   token,
   status,
   confirmedPlusOnes = 0,
+  attendance = PhaseAttendance.BOTH,
 }: {
   token: string;
-  status: "ACCEPTED" | "DECLINED";
+  status: RsvpStatus;
   confirmedPlusOnes?: number;
+  attendance?: PhaseAttendance;
 }) {
   try {
     const guest = await prisma.guest.findUnique({
@@ -26,10 +30,13 @@ export async function submitRsvp({
       guest.allowedPlusOnes
     );
 
+    const finalAttendance = status === "DECLINED" ? PhaseAttendance.NONE : attendance;
+
     const updated = await prisma.guest.update({
       where: { token },
       data: {
         status,
+        attendance: finalAttendance,
         confirmedPlusOnes: status === "ACCEPTED" ? safePlusOnes : 0,
         respondedAt: new Date(),
       },
