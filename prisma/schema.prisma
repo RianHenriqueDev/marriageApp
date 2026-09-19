@@ -1,0 +1,49 @@
+datasource db {
+  provider  = "mysql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Gender {
+  M
+  F
+}
+
+enum Category {
+  PADRINHOS
+  FAMILIA_IDOSOS
+  AMIGOS
+  GERAL
+}
+
+enum FlowType {
+  GAMEPLAY
+  CLASSIC
+}
+
+enum RsvpStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Guest {
+  id                 String     @id @default(cuid())
+  token              String     @unique // slug único para a URL (ex: carlos-moura-a7x9)
+  name               String     // Nome exibido (ex: "Carlos Moura", "Vô João e Vó Maria")
+  gender             Gender     @default(M)
+  category           Category   @default(AMIGOS)
+  flowType           FlowType   @default(GAMEPLAY)
+  scriptId           String?    // ID do roteiro atribuído (ex: 'm_01', 'f_04') para evitar repetição
+  customNote         String?    // Mensagem de zoeira extra ou texto de carinho para idosos
+  allowedPlusOnes    Int        @default(0) // Quantos acompanhantes tem direito
+  confirmedPlusOnes  Int        @default(0) // Quantos confirmou levar
+  status             RsvpStatus @default(PENDING)
+  respondedAt        DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
