@@ -101,6 +101,14 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     }
   };
 
+  const formatMessagePreview = (msg: string, maxLength: number = 75) => {
+    const trimmed = msg.trim();
+    if (trimmed.length <= maxLength) {
+      return `“${trimmed}”`;
+    }
+    return `“${trimmed.slice(0, maxLength).trim()}...”`;
+  };
+
   const filteredGuests = guests.filter((g) => {
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === "ALL" || g.status === filterStatus;
@@ -304,7 +312,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                                 <span>Recado dos noivos</span>
                               </div>
                               <p className="text-[11px] text-content-secondary group-hover/msg:text-content-primary italic line-clamp-2 mt-0.5 leading-snug">
-                                &ldquo;{guest.guestMessage}&rdquo;
+                                {formatMessagePreview(guest.guestMessage, 70)}
                               </p>
                               <span className="text-[9.5px] text-accent-olive font-medium group-hover/msg:underline mt-0.5 inline-block">
                                 Ver mensagem completa →
@@ -548,7 +556,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                         </span>
                       </div>
                       <p className="text-xs font-serif italic text-content-primary leading-relaxed line-clamp-3">
-                        &ldquo;{guest.guestMessage}&rdquo;
+                        {formatMessagePreview(guest.guestMessage, 90)}
                       </p>
                     </button>
                   )}
