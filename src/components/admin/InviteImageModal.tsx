@@ -42,14 +42,15 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
       : `/c/${guest.token}`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-surface-card rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-border-hairline shadow-editorial-lg my-6 animate-fade-up">
-        <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-surface-card rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 border border-border-hairline shadow-editorial-lg max-h-[94vh] flex flex-col justify-between animate-fade-up">
+        {/* Cabeçalho do Modal */}
+        <div className="flex items-center justify-between pb-2 border-b border-border-hairline">
           <div>
             <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
               Cartão Digital
             </span>
-            <h3 className="font-serif text-2xl font-normal text-content-primary">
+            <h3 className="font-serif text-xl sm:text-2xl font-normal text-content-primary">
               Exportar Convite em Imagem
             </h3>
           </div>
@@ -61,62 +62,62 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
           </button>
         </div>
 
-        {/* PRÉVIA DO CARTÃO EDITORIAL */}
-        <div className="flex justify-center">
+        {/* PRÉVIA DO CARTÃO EDITORIAL (ÁREA ROLÁVEL COMPACTA) */}
+        <div className="overflow-y-auto flex-1 py-1 flex justify-center">
           <div
             ref={cardRef}
-            className="w-[340px] bg-canvas-base p-8 rounded-3xl border border-border-hairline shadow-editorial text-center space-y-6 relative overflow-hidden"
+            className="w-[320px] bg-canvas-base p-6 rounded-3xl border border-border-hairline shadow-editorial text-center space-y-4 relative overflow-hidden"
           >
             {/* Monograma */}
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-surface-card border border-border-hairline text-accent-olive mx-auto">
-              <span className="font-serif text-base font-light tracking-wider">J & R</span>
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-card border border-border-hairline text-accent-olive mx-auto">
+              <span className="font-serif text-sm font-light tracking-wider">J ♥ R</span>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <span className="text-[9px] font-sans tracking-[0.25em] uppercase text-content-secondary block">
                 Convite de Casamento
               </span>
-              <h2 className="font-serif text-2xl text-content-primary font-normal">
-                Jeniffer & Rian
+              <h2 className="font-serif text-xl text-content-primary font-normal">
+                Jeniffer ♥ Rian
               </h2>
             </div>
 
-            <div className="gold-divider w-16 mx-auto" />
+            <div className="gold-divider w-14 mx-auto" />
 
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <span className="text-[9px] font-sans tracking-[0.15em] uppercase text-content-muted block">
                 Convidado(a)
               </span>
-              <h3 className="font-serif text-xl font-medium text-accent-olive">
+              <h3 className="font-serif text-lg font-medium text-accent-olive">
                 {guest.name}
               </h3>
             </div>
 
             {/* Informações dos dois momentos */}
-            <div className="space-y-2 text-left bg-surface-card p-4 rounded-2xl border border-border-hairline text-xs font-sans text-content-secondary">
-              <div className="flex items-center justify-between text-content-primary font-medium border-b border-border-hairline/60 pb-1.5">
-                <span>12 de Dezembro de 2026</span>
-                <span>Ribeirão Preto</span>
+            <div className="space-y-2 text-left bg-surface-card p-3.5 rounded-2xl border border-border-hairline text-xs font-sans text-content-secondary">
+              <div className="flex items-center justify-between text-content-primary font-medium border-b border-border-hairline/60 pb-1">
+                <span className="text-[11px]">12 de Dezembro de 2026</span>
+                <span className="text-[11px]">Ribeirão Preto</span>
               </div>
-              <div className="space-y-1 pt-1 text-[11px]">
+              <div className="space-y-0.5 pt-0.5 text-[10.5px]">
                 <div className="font-medium text-content-primary">
                   10:30h — 1º Cartório de Registro Civil
                 </div>
-                <div className="text-content-muted text-[10px]">
+                <div className="text-content-muted text-[9.5px]">
                   Rua Visconde de Inhaúma, 1315 — Centro
                 </div>
               </div>
-              <div className="space-y-1 pt-1 text-[11px] border-t border-border-hairline/60">
+              <div className="space-y-0.5 pt-1 border-t border-border-hairline/60 text-[10.5px]">
                 <div className="font-medium text-content-primary">
                   12:00h — Almoço na Churrascaria JP Steakhouse
                 </div>
-                <div className="text-content-muted text-[10px]">
+                <div className="text-content-muted text-[9.5px]">
                   Por adesão individual • Av. Alice de Moura Bragheto, 76
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-border-hairline text-[10px] font-sans text-content-muted">
+            <div className="pt-1.5 border-t border-border-hairline text-[9.5px] font-sans text-content-muted">
               Confirme sua presença pelo link exclusivo:
               <br />
               <span className="text-accent-olive font-medium break-all">{inviteUrl}</span>
@@ -124,11 +125,12 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
           </div>
         </div>
 
-        <div className="flex gap-3 pt-2">
+        {/* Ações do Modal */}
+        <div className="flex gap-3 pt-1 border-t border-border-hairline/60">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
+            className="flex-1 py-2.5 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
           >
             Fechar
           </button>
@@ -136,7 +138,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
             type="button"
             disabled={downloading}
             onClick={handleDownload}
-            className="flex-1 py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial flex items-center justify-center gap-2"
+            className="flex-1 py-2.5 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial flex items-center justify-center gap-1.5"
           >
             <Download className="w-4 h-4" strokeWidth={1.5} />
             <span>{downloading ? "Gerando..." : "Baixar Imagem"}</span>

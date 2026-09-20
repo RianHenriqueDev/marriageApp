@@ -5,6 +5,7 @@ import { generateToken } from "@/lib/utils";
 import { AttendanceSelection, RsvpState } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginAdmin(password: string) {
   const expectedPassword = process.env.ADMIN_PASSWORD;
@@ -32,6 +33,7 @@ export async function logoutAdmin(): Promise<void> {
   const cookieStore = cookies();
   cookieStore.delete("admin_session");
   revalidatePath("/admin");
+  redirect("/admin");
 }
 
 export async function createGuest(formData: FormData) {
