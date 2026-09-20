@@ -46,7 +46,7 @@ export default function LuxuryLandingPage() {
             Jeniffer & Rian
           </h1>
           <p className="text-sm sm:text-base font-sans text-[#7C7C74] max-w-md mx-auto pt-1 leading-relaxed">
-            Convidam para a celebração de seu matrimônio a realizar-se no dia doze de Dezembro de dois mil e vinte e seis.
+            Convidam para a celebração de seu matrimônio a realizar-se no dia 12 de Dezembro de 2026.
           </p>
         </div>
 

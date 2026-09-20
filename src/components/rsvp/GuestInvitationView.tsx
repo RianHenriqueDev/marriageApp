@@ -21,6 +21,8 @@ interface GuestInvitationViewProps {
     phone?: string | null;
     maxGuests: number;
     confirmedGuests: number;
+    hasSpouse?: boolean;
+    childrenCount?: number;
     attendance: AttendanceSelection;
     status: RsvpState;
     guestMessage?: string | null;
@@ -33,7 +35,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
     guest.attendance || AttendanceSelection.BOTH
   );
 
-  // Estados dos checkboxes independentes
+  // Estados dos checkboxes independentes de momentos
   const [attendingCeremony, setAttendingCeremony] = useState<boolean>(
     guest.attendance === AttendanceSelection.BOTH ||
       guest.attendance === AttendanceSelection.ONLY_CEREMONY ||
@@ -45,10 +47,12 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
       guest.status === RsvpState.PENDING
   );
 
-  // Contador minimalista [-] X [+]
-  const [guestCount, setGuestCount] = useState<number>(
-    guest.confirmedGuests > 0 ? guest.confirmedGuests : Math.min(1, guest.maxGuests)
-  );
+  // Seletores autônomos de Cônjuge e Filhos
+  const [hasSpouse, setHasSpouse] = useState<boolean>(Boolean(guest.hasSpouse));
+  const [childrenCount, setChildrenCount] = useState<number>(guest.childrenCount || 0);
+
+  // Total de pessoas confirmadas calculadas em tempo real
+  const totalGuests = 1 + (hasSpouse ? 1 : 0) + childrenCount;
 
   const [message, setMessage] = useState<string>(guest.guestMessage || "");
   const [loading, setLoading] = useState(false);
@@ -80,7 +84,8 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
     const res = await submitRsvp({
       token: guest.token,
       attendance: targetAttendance,
-      confirmedGuests: targetAttendance === AttendanceSelection.DECLINED ? 0 : guestCount,
+      hasSpouse,
+      childrenCount,
       guestMessage: message,
     });
 
@@ -179,14 +184,14 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               </a>
             </div>
 
-            {/* 02 • RECEPÇÃO & BRINDE */}
+            {/* 02 • ALMOÇO */}
             <div className="space-y-3 pt-6">
               <div className="flex items-baseline justify-between">
                 <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold">
-                  02 • RECEPÇÃO & BRINDE
+                  02 • ALMOÇO
                 </span>
                 <span className="font-serif text-sm text-[#2C3328] font-medium">
-                  ~12:30h
+                  12:00h
                 </span>
               </div>
 
@@ -244,7 +249,18 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
 
             <p className="text-xs font-sans text-[#7C7C74] max-w-sm mx-auto leading-relaxed">
               Sua resposta foi registrada com sucesso.
-              {guestCount > 1 && ` Pessoas confirmadas: ${guestCount}.`}
+              {totalGuests > 1 ? (
+                <span className="block mt-1 text-[#2C3328] font-medium">
+                  {totalGuests} pessoas confirmadas
+                  {hasSpouse && " (você + cônjuge"}
+                  {childrenCount > 0 && (hasSpouse ? ` + ${childrenCount} filho(s))` : ` (você + ${childrenCount} filho(s))`)}
+                  {!hasSpouse && childrenCount === 0 && ")"}
+                </span>
+              ) : (
+                <span className="block mt-1 text-[#2C3328] font-medium">
+                  Presença confirmada individualmente.
+                </span>
+              )}
             </p>
 
             <div className="text-[11px] font-sans text-[#2C3328] font-medium pt-1">
@@ -337,7 +353,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
                     Almoço na JP Steakhouse
                   </span>
                   <span className="text-[11px] font-sans text-[#7C7C74] block mt-0.5">
-                    ~12:30h • Recepção e brinde por adesão individual
+                    12:00h • Almoço por adesão individual
                   </span>
                 </div>
                 <div
@@ -352,43 +368,92 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               </button>
             </div>
 
-            {/* SELETOR DE CONVIDADOS ACOMPANHANTES: [-] X [+] */}
-            {guest.maxGuests > 1 && (
-              <div className="p-4 rounded-xl bg-[#F8F6F0] border border-[#E8E2D5] flex items-center justify-between">
+            {/* SELETORES DE CÔNJUGE E FILHOS (RESPOSTA DIRETA DO CONVIDADO) */}
+            <div className="p-5 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-4">
+              <div>
+                <span className="font-serif text-sm font-medium text-[#1A1A19] block">
+                  Acompanhantes da Família
+                </span>
+                <span className="text-[11px] font-sans text-[#7C7C74]">
+                  Informe se você virá acompanhado(a) de seu cônjuge e/ou filho(s):
+                </span>
+              </div>
+
+              {/* Opção Cônjuge */}
+              <button
+                type="button"
+                onClick={() => setHasSpouse(!hasSpouse)}
+                className={`w-full p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  hasSpouse
+                    ? "bg-white border-[#C5A880] shadow-sm text-[#1A1A19]"
+                    : "bg-white/60 border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
+                }`}
+              >
                 <div>
-                  <span className="font-serif text-sm font-medium text-[#1A1A19] block">
-                    Quantas pessoas confirmarão?
+                  <span className="font-sans text-xs font-semibold block text-[#1A1A19]">
+                    Cônjuge / Parceiro(a)
+                  </span>
+                  <span className="text-[11px] font-sans text-[#7C7C74] block">
+                    {hasSpouse ? "Presença confirmada" : "Não levará cônjuge"}
+                  </span>
+                </div>
+                <div
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                    hasSpouse
+                      ? "bg-[#2C3328] border-[#2C3328] text-white"
+                      : "border-[#C5A880]/60 bg-white"
+                  }`}
+                >
+                  {hasSpouse && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
+                </div>
+              </button>
+
+              {/* Opção Filhos com Contador */}
+              <div className="p-3.5 rounded-xl bg-white border border-[#E8E2D5] flex items-center justify-between">
+                <div>
+                  <span className="font-sans text-xs font-semibold text-[#1A1A19] block">
+                    Filho(s)
                   </span>
                   <span className="text-[11px] font-sans text-[#7C7C74]">
-                    Limite máximo deste convite: {guest.maxGuests} pessoas
+                    {childrenCount === 0
+                      ? "Nenhum filho acompanhando"
+                      : `${childrenCount} filho(s) confirmado(s)`}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white border border-[#E8E2D5] px-2.5 py-1.5 rounded-full shadow-sm">
+                <div className="flex items-center gap-3 bg-[#F8F6F0] border border-[#E8E2D5] px-2.5 py-1.5 rounded-full shadow-sm">
                   <button
                     type="button"
-                    disabled={guestCount <= 1}
-                    onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                    disabled={childrenCount <= 0}
+                    onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
                     className="p-1 text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
                     <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </button>
 
                   <span className="font-serif text-base font-medium text-[#1A1A19] min-w-[20px] text-center">
-                    {guestCount}
+                    {childrenCount}
                   </span>
 
                   <button
                     type="button"
-                    disabled={guestCount >= guest.maxGuests}
-                    onClick={() => setGuestCount(Math.min(guest.maxGuests, guestCount + 1))}
+                    disabled={childrenCount >= 10}
+                    onClick={() => setChildrenCount(Math.min(10, childrenCount + 1))}
                     className="p-1 text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </button>
                 </div>
               </div>
-            )}
+
+              {/* Resumo do Total de Presentes */}
+              <div className="pt-1 flex items-center justify-between text-xs font-sans text-[#2C3328] px-1">
+                <span className="text-[#7C7C74]">Total de pessoas confirmadas:</span>
+                <span className="font-medium bg-white px-2.5 py-0.5 rounded-full border border-[#E8E2D5]">
+                  {totalGuests} {totalGuests === 1 ? "pessoa" : "pessoas"} (você{hasSpouse ? " + cônjuge" : ""}{childrenCount > 0 ? ` + ${childrenCount} filho(s)` : ""})
+                </span>
+              </div>
+            </div>
 
             {/* RECADO CARINHOSO AOS NOIVOS */}
             <div className="space-y-1.5">

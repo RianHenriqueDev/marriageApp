@@ -38,7 +38,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-content-primary/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
       <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 animate-fade-up">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
@@ -78,33 +78,20 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-content-primary font-medium mb-1.5">
-                WhatsApp (Opcional)
-              </label>
-              <input
-                type="text"
-                name="phone"
-                defaultValue={guest?.phone || ""}
-                placeholder="(16) 99999-9999"
-                className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
-              />
-            </div>
-
-            <div>
-              <label className="block text-content-primary font-medium mb-1.5">
-                Limite de Convidados
-              </label>
-              <input
-                type="number"
-                name="maxGuests"
-                min="1"
-                max="10"
-                defaultValue={guest?.maxGuests ?? 1}
-                className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all"
-              />
-            </div>
+          <div>
+            <label className="block text-content-primary font-medium mb-1.5">
+              WhatsApp (Opcional)
+            </label>
+            <input
+              type="text"
+              name="phone"
+              defaultValue={guest?.phone || ""}
+              placeholder="(16) 99999-9999"
+              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
+            />
+            <p className="text-[10px] text-content-muted mt-1">
+              O convidado responderá diretamente no link se virá com cônjuge e a quantidade de filhos.
+            </p>
           </div>
 
           {guest && (

@@ -27,7 +27,9 @@ model Guest {
   name               String              // Nome formal exibido no convite (ex: "Paulo & Lúcia")
   phone              String?             // WhatsApp formatado
   maxGuests          Int                 @default(1) // Capacidade máxima de convidados cobertos por este convite
-  confirmedGuests    Int                 @default(0) // Quantidade real confirmada
+  confirmedGuests    Int                 @default(0) // Quantidade real confirmada (total: titular + conjuge + filhos)
+  hasSpouse          Boolean             @default(false) // Convidado confirmou presença do cônjuge/parceiro(a)
+  childrenCount      Int                 @default(0) // Quantidade de filhos confirmados
   attendance         AttendanceSelection @default(BOTH)
   status             RsvpState           @default(PENDING)
   guestMessage       String?             // Recado especial deixado para o casal

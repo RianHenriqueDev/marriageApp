@@ -7,8 +7,14 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function loginAdmin(password: string) {
-  const expectedPassword = process.env.ADMIN_PASSWORD || "casamento12122026";
-  if (password === expectedPassword) {
+  const expectedPassword = process.env.ADMIN_PASSWORD;
+  
+  if (!expectedPassword) {
+    console.error("ADMIN_PASSWORD não configurada no ambiente.");
+    return { success: false, error: "Configuração de senha ausente no servidor." };
+  }
+
+  if (password && password.trim() === expectedPassword.trim()) {
     const cookieStore = cookies();
     cookieStore.set("admin_session", "authenticated", {
       httpOnly: true,

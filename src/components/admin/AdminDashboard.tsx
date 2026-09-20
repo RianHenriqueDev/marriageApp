@@ -276,10 +276,23 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                         )}
                       </td>
 
-                      <td className="px-3 py-3.5 text-center text-content-primary font-medium">
-                        {guest.status === RsvpState.CONFIRMED
-                          ? `${guest.confirmedGuests} de ${guest.maxGuests}`
-                          : `Até ${guest.maxGuests}`}
+                      <td className="px-3 py-3.5 text-center text-content-primary">
+                        {guest.status === RsvpState.CONFIRMED ? (
+                          <div>
+                            <span className="font-semibold text-accent-olive">
+                              {guest.confirmedGuests} {guest.confirmedGuests === 1 ? "pessoa" : "pessoas"}
+                            </span>
+                            <div className="text-[10px] text-content-muted">
+                              {guest.hasSpouse && "• c/ cônjuge "}
+                              {guest.childrenCount > 0 && `• ${guest.childrenCount} filho(s)`}
+                              {!guest.hasSpouse && guest.childrenCount === 0 && "• titular"}
+                            </div>
+                          </div>
+                        ) : guest.status === RsvpState.DECLINED ? (
+                          <span className="text-content-muted">0</span>
+                        ) : (
+                          <span className="text-content-muted text-[11px]">Aguardando</span>
+                        )}
                       </td>
 
                       <td className="px-4 py-3.5 text-right">

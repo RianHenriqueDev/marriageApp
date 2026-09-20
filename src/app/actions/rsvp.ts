@@ -7,12 +7,14 @@ import { AttendanceSelection, RsvpState } from "@prisma/client";
 export async function submitRsvp({
   token,
   attendance,
-  confirmedGuests,
+  hasSpouse = false,
+  childrenCount = 0,
   guestMessage,
 }: {
   token: string;
   attendance: AttendanceSelection;
-  confirmedGuests: number;
+  hasSpouse?: boolean;
+  childrenCount?: number;
   guestMessage?: string;
 }) {
   try {
@@ -25,10 +27,11 @@ export async function submitRsvp({
     }
 
     const isDeclined = attendance === AttendanceSelection.DECLINED;
-    const safeConfirmed = isDeclined
-      ? 0
-      : Math.min(Math.max(1, confirmedGuests), guest.maxGuests);
-
+    const safeChildren = Math.max(0, Math.min(10, Math.floor(childrenCount || 0)));
+    const safeSpouse = Boolean(hasSpouse);
+    
+    // Titular (1) + Cônjuge (se marcado) + Filhos
+    const totalConfirmed = isDeclined ? 0 : 1 + (safeSpouse ? 1 : 0) + safeChildren;
     const status: RsvpState = isDeclined ? RsvpState.DECLINED : RsvpState.CONFIRMED;
 
     const updated = await prisma.guest.update({
@@ -36,7 +39,9 @@ export async function submitRsvp({
       data: {
         attendance,
         status,
-        confirmedGuests: safeConfirmed,
+        hasSpouse: isDeclined ? false : safeSpouse,
+        childrenCount: isDeclined ? 0 : safeChildren,
+        confirmedGuests: totalConfirmed,
         guestMessage: guestMessage?.trim() || null,
         respondedAt: new Date(),
       },

@@ -42,7 +42,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
       : `/c/${guest.token}`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-content-primary/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-surface-card rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-border-hairline shadow-editorial-lg my-6 animate-fade-up">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
@@ -108,7 +108,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
               </div>
               <div className="space-y-1 pt-1 text-[11px] border-t border-border-hairline/60">
                 <div className="font-medium text-content-primary">
-                  ~12:30h — Almoço na Churrascaria JP Steakhouse
+                  12:00h — Almoço na Churrascaria JP Steakhouse
                 </div>
                 <div className="text-content-muted text-[10px]">
                   Por adesão individual • Av. Alice de Moura Bragheto, 76
