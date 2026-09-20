@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { toPng } from "html-to-image";
 import { Download, X } from "lucide-react";
 import { Guest } from "@prisma/client";
@@ -13,8 +14,10 @@ interface InviteImageModalProps {
 export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "unset";
@@ -48,7 +51,9 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
       ? `${window.location.origin}/c/${guest.token}`
       : `/c/${guest.token}`;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4">
       <div className="bg-surface-card rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3 sm:space-y-4 border border-border-hairline shadow-none max-h-[85vh] flex flex-col justify-between animate-fade-up">
         {/* Cabeçalho do Modal */}
@@ -152,6 +157,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

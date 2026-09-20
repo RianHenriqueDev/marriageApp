@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { createGuest, updateGuest } from "@/app/admin/actions";
 import { X } from "lucide-react";
 import { Guest, AttendanceSelection, RsvpState, GuestCategory } from "@prisma/client";
@@ -14,8 +15,10 @@ interface GuestFormModalProps {
 export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "unset";
@@ -44,7 +47,9 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4">
       <div className="bg-surface-card border border-border-hairline shadow-none rounded-2xl sm:rounded-3xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-fade-up max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
@@ -181,6 +186,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

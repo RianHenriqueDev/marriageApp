@@ -107,7 +107,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   });
 
   return (
-    <div className="space-y-8 animate-fade-up">
+    <div className="space-y-8 animate-fade-in">
       {/* CARDS DE MÉTRICAS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Total Cadastrado */}
