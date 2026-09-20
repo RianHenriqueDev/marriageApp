@@ -10,7 +10,7 @@ export default function NotFound() {
         <span>12 • 12 • 2026</span>
       </header>
 
-      <div className="max-w-md w-full mx-auto my-auto bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-6px] sm:outline-offset-[-8px] shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-2xl p-6 sm:p-10 text-center space-y-6 animate-fade-up">
+      <div className="max-w-md w-full mx-auto my-auto bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-6px] sm:outline-offset-[-8px] rounded-2xl p-6 sm:p-10 text-center space-y-6 animate-fade-up">
         <div className="flex justify-center">
           <WeddingMonogram size="md" className="mx-auto" />
         </div>

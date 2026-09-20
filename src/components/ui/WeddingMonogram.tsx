@@ -31,7 +31,7 @@ export function WeddingMonogram({
         viewBox="0 0 120 120"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-sm"
+        className="w-full h-full"
       >
         {/* Círculo Externo Dourado Fino */}
         <circle

@@ -18,7 +18,19 @@ import {
 import { deleteGuest } from "@/app/admin/actions";
 import { InviteImageModal } from "./InviteImageModal";
 import { GuestFormModal } from "./GuestFormModal";
-import { Guest, AttendanceSelection, RsvpState } from "@prisma/client";
+import { Guest, AttendanceSelection, RsvpState, GuestCategory } from "@prisma/client";
+
+export const GUEST_CATEGORY_LABELS: Record<GuestCategory, { label: string; tag: string }> = {
+  [GuestCategory.BRIDE_FRIEND]: { label: "Amigo(a) da Noiva", tag: "Amigo • Noiva" },
+  [GuestCategory.GROOM_FRIEND]: { label: "Amigo(a) do Noivo", tag: "Amigo • Noivo" },
+  [GuestCategory.MUTUAL_FRIEND]: { label: "Amigo(a) de Ambos", tag: "Amigo • Ambos" },
+  [GuestCategory.BRIDE_ACQUAINTANCE]: { label: "Conhecido(a) da Noiva", tag: "Conhecido • Noiva" },
+  [GuestCategory.GROOM_ACQUAINTANCE]: { label: "Conhecido(a) do Noivo", tag: "Conhecido • Noivo" },
+  [GuestCategory.MUTUAL_ACQUAINTANCE]: { label: "Conhecido(a) de Ambos", tag: "Conhecido • Ambos" },
+  [GuestCategory.BRIDE_FAMILY]: { label: "Família da Noiva", tag: "Família • Noiva" },
+  [GuestCategory.GROOM_FAMILY]: { label: "Família do Noivo", tag: "Família • Noivo" },
+  [GuestCategory.MUTUAL_FAMILY]: { label: "Família de Ambos", tag: "Família • Ambos" },
+};
 
 interface AdminDashboardProps {
   initialGuests: Guest[];
@@ -29,6 +41,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [filterAttendance, setFilterAttendance] = useState<string>("ALL");
+  const [filterCategory, setFilterCategory] = useState<string>("ALL");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   // Modais
@@ -89,7 +102,8 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === "ALL" || g.status === filterStatus;
     const matchesAttendance = filterAttendance === "ALL" || g.attendance === filterAttendance;
-    return matchesSearch && matchesStatus && matchesAttendance;
+    const matchesCategory = filterCategory === "ALL" || g.category === filterCategory;
+    return matchesSearch && matchesStatus && matchesAttendance && matchesCategory;
   });
 
   return (
@@ -170,7 +184,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <div className="grid grid-cols-2 gap-2 flex-1 sm:flex-initial">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1 sm:flex-initial">
               {/* Filtro de Status */}
               <select
                 value={filterStatus}
@@ -193,6 +207,30 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                 <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
                 <option value={AttendanceSelection.ONLY_CEREMONY}>Só Cerimônia</option>
                 <option value={AttendanceSelection.ONLY_RESTAURANT}>Só Almoço</option>
+              </select>
+
+              {/* Filtro de Vínculo */}
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="w-full px-3 py-2 sm:py-2.5 rounded-full bg-canvas-subtle/70 border border-border-hairline text-xs font-sans text-content-secondary focus:outline-none focus:border-accent-olive cursor-pointer"
+              >
+                <option value="ALL">Todos os Vínculos</option>
+                <optgroup label="Amigos">
+                  <option value={GuestCategory.BRIDE_FRIEND}>Amigo(a) da Noiva</option>
+                  <option value={GuestCategory.GROOM_FRIEND}>Amigo(a) do Noivo</option>
+                  <option value={GuestCategory.MUTUAL_FRIEND}>Amigo(a) de Ambos</option>
+                </optgroup>
+                <optgroup label="Conhecidos">
+                  <option value={GuestCategory.BRIDE_ACQUAINTANCE}>Conhecido(a) da Noiva</option>
+                  <option value={GuestCategory.GROOM_ACQUAINTANCE}>Conhecido(a) do Noivo</option>
+                  <option value={GuestCategory.MUTUAL_ACQUAINTANCE}>Conhecido(a) de Ambos</option>
+                </optgroup>
+                <optgroup label="Família">
+                  <option value={GuestCategory.BRIDE_FAMILY}>Família da Noiva</option>
+                  <option value={GuestCategory.GROOM_FAMILY}>Família do Noivo</option>
+                  <option value={GuestCategory.MUTUAL_FAMILY}>Família de Ambos</option>
+                </optgroup>
               </select>
             </div>
 
@@ -238,11 +276,18 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                         <div className="font-medium text-content-primary">
                           {guest.name}
                         </div>
-                        {guest.phone && (
-                          <div className="text-[11px] text-content-muted">
-                            {guest.phone}
-                          </div>
-                        )}
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                          {guest.category && (
+                            <span className="text-[10px] font-sans font-medium text-accent-olive bg-canvas-subtle px-2 py-0.5 rounded-full border border-border-hairline">
+                              {GUEST_CATEGORY_LABELS[guest.category]?.tag || guest.category}
+                            </span>
+                          )}
+                          {guest.phone && (
+                            <span className="text-[11px] text-content-muted">
+                              {guest.phone}
+                            </span>
+                          )}
+                        </div>
                         {guest.guestMessage && (
                           <div className="text-[11px] text-accent-olive italic truncate max-w-xs mt-0.5">
                             &ldquo;{guest.guestMessage}&rdquo;
@@ -382,11 +427,18 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                       <h4 className="font-serif text-base font-medium text-content-primary truncate">
                         {guest.name}
                       </h4>
-                      {guest.phone && (
-                        <p className="text-[11px] font-sans text-content-muted">
-                          {guest.phone}
-                        </p>
-                      )}
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        {guest.category && (
+                          <span className="text-[10px] font-sans font-medium text-accent-olive bg-canvas-subtle px-2 py-0.5 rounded-full border border-border-hairline">
+                            {GUEST_CATEGORY_LABELS[guest.category]?.tag || guest.category}
+                          </span>
+                        )}
+                        {guest.phone && (
+                          <span className="text-[11px] font-sans text-content-muted">
+                            {guest.phone}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <span
                       className={`shrink-0 inline-flex items-center gap-1 text-[10px] font-medium px-2.5 py-1 rounded-full border ${

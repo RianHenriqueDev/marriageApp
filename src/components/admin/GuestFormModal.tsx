@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createGuest, updateGuest } from "@/app/admin/actions";
 import { X } from "lucide-react";
-import { Guest, AttendanceSelection, RsvpState } from "@prisma/client";
+import { Guest, AttendanceSelection, RsvpState, GuestCategory } from "@prisma/client";
 
 interface GuestFormModalProps {
   guest?: Guest | null;
@@ -14,6 +14,13 @@ interface GuestFormModalProps {
 export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,8 +45,8 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-7 space-y-4 sm:space-y-6 animate-fade-up max-h-[92vh] overflow-y-auto my-auto">
+    <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4">
+      <div className="bg-surface-card border border-border-hairline rounded-2xl sm:rounded-3xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-fade-up max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
             <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
@@ -92,6 +99,33 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
             <p className="text-[10px] text-content-muted mt-1">
               O convidado responderá diretamente no link se virá com cônjuge e a quantidade de filhos.
             </p>
+          </div>
+
+          <div>
+            <label className="block text-content-primary font-medium mb-1.5">
+              Vínculo com os Noivos
+            </label>
+            <select
+              name="category"
+              defaultValue={guest?.category || GuestCategory.MUTUAL_FRIEND}
+              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all text-xs cursor-pointer"
+            >
+              <optgroup label="Amigos">
+                <option value={GuestCategory.BRIDE_FRIEND}>Amigo(a) da Noiva</option>
+                <option value={GuestCategory.GROOM_FRIEND}>Amigo(a) do Noivo</option>
+                <option value={GuestCategory.MUTUAL_FRIEND}>Amigo(a) de Ambos</option>
+              </optgroup>
+              <optgroup label="Conhecidos">
+                <option value={GuestCategory.BRIDE_ACQUAINTANCE}>Conhecido(a) da Noiva</option>
+                <option value={GuestCategory.GROOM_ACQUAINTANCE}>Conhecido(a) do Noivo</option>
+                <option value={GuestCategory.MUTUAL_ACQUAINTANCE}>Conhecido(a) de Ambos</option>
+              </optgroup>
+              <optgroup label="Família">
+                <option value={GuestCategory.BRIDE_FAMILY}>Família da Noiva</option>
+                <option value={GuestCategory.GROOM_FAMILY}>Família do Noivo</option>
+                <option value={GuestCategory.MUTUAL_FAMILY}>Família de Ambos</option>
+              </optgroup>
+            </select>
           </div>
 
           {guest && (

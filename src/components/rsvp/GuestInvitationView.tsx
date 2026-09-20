@@ -111,7 +111,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
         - Borda interna decorativa outline dourada suave com offset
         - Sombra nobre e difusa
       */}
-      <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/40 outline-offset-[-6px] sm:outline-offset-[-12px] md:outline-offset-[-14px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-2xl p-4 sm:p-8 md:p-12 text-[#1A1A19] space-y-8 sm:space-y-10">
+      <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/40 outline-offset-[-6px] sm:outline-offset-[-12px] md:outline-offset-[-14px] rounded-2xl p-4 sm:p-8 md:p-12 text-[#1A1A19] space-y-8 sm:space-y-10">
         {/* TOPO: MONOGRAMA CIRCULAR VETORIAL (J & R) */}
         <div className="text-center space-y-3 sm:space-y-4 pt-1 sm:pt-2">
           <WeddingMonogram size="lg" className="mx-auto" />

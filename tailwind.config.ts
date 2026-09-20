@@ -31,9 +31,9 @@ const config: Config = {
         sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "sans-serif"],
       },
       boxShadow: {
-        editorial: "0 20px 50px rgba(0, 0, 0, 0.06)",
-        "editorial-lg": "0 25px 60px rgba(44, 51, 40, 0.08)",
-        "editorial-sm": "0 4px 20px rgba(0, 0, 0, 0.03)",
+        editorial: "none",
+        "editorial-lg": "none",
+        "editorial-sm": "none",
       },
       borderRadius: {
         "2xl": "1rem",

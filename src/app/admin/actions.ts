@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { generateToken } from "@/lib/utils";
-import { AttendanceSelection, RsvpState } from "@prisma/client";
+import { AttendanceSelection, RsvpState, GuestCategory } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -41,6 +41,7 @@ export async function createGuest(formData: FormData) {
     const name = formData.get("name") as string;
     const phone = (formData.get("phone") as string) || null;
     const maxGuests = parseInt((formData.get("maxGuests") as string) || "1", 10);
+    const category = (formData.get("category") as GuestCategory) || GuestCategory.MUTUAL_FRIEND;
 
     if (!name || name.trim().length === 0) {
       return { success: false, error: "O nome do convidado é obrigatório." };
@@ -57,6 +58,7 @@ export async function createGuest(formData: FormData) {
         confirmedGuests: 0,
         attendance: AttendanceSelection.BOTH,
         status: RsvpState.PENDING,
+        category,
       },
     });
 
@@ -76,6 +78,7 @@ export async function updateGuest(id: string, formData: FormData) {
     const confirmedGuests = parseInt((formData.get("confirmedGuests") as string) || "0", 10);
     const attendance = (formData.get("attendance") as AttendanceSelection) || AttendanceSelection.BOTH;
     const status = (formData.get("status") as RsvpState) || RsvpState.PENDING;
+    const category = (formData.get("category") as GuestCategory) || GuestCategory.MUTUAL_FRIEND;
 
     if (!name || name.trim().length === 0) {
       return { success: false, error: "O nome é obrigatório." };
@@ -90,6 +93,7 @@ export async function updateGuest(id: string, formData: FormData) {
         confirmedGuests: isNaN(confirmedGuests) ? 0 : confirmedGuests,
         attendance,
         status,
+        category,
       },
     });
 

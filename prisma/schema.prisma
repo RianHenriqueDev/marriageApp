@@ -21,6 +21,18 @@ enum RsvpState {
   DECLINED
 }
 
+enum GuestCategory {
+  BRIDE_FRIEND        // Amigo(a) da Noiva
+  GROOM_FRIEND        // Amigo(a) do Noivo
+  MUTUAL_FRIEND       // Amigo(a) de Ambos
+  BRIDE_ACQUAINTANCE  // Conhecido(a) da Noiva
+  GROOM_ACQUAINTANCE  // Conhecido(a) do Noivo
+  MUTUAL_ACQUAINTANCE // Conhecido(a) de Ambos
+  BRIDE_FAMILY        // Família da Noiva
+  GROOM_FAMILY        // Família do Noivo
+  MUTUAL_FAMILY       // Família de Ambos
+}
+
 model Guest {
   id                 String              @id @default(cuid())
   token              String              @unique // slug limpo e humanizado (ex: tios-paulo-e-lucia-8a2)
@@ -32,6 +44,7 @@ model Guest {
   childrenCount      Int                 @default(0) // Quantidade de filhos confirmados
   attendance         AttendanceSelection @default(BOTH)
   status             RsvpState           @default(PENDING)
+  category           GuestCategory       @default(MUTUAL_FRIEND)
   guestMessage       String?             // Recado especial deixado para o casal
   respondedAt        DateTime?
   createdAt          DateTime            @default(now())
@@ -39,5 +52,6 @@ model Guest {
 
   @@index([token])
   @@index([status])
+  @@index([category])
 }
 

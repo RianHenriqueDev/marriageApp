@@ -65,7 +65,7 @@ export default function LuxuryLandingPage() {
           "Possui um convite exclusivo? Digite seu código de convidado:"
           com input de linha única (border-b border-[#C5A880] bg-transparent text-center)
         */}
-        <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-6px] sm:outline-offset-[-8px] shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-2xl p-5 sm:p-10 space-y-4 sm:space-y-5 max-w-md mx-auto">
+        <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-6px] sm:outline-offset-[-8px] rounded-2xl p-5 sm:p-10 space-y-4 sm:space-y-5 max-w-md mx-auto">
           <div className="space-y-1">
             <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold block">
               Acesso Restrito
