@@ -42,8 +42,10 @@ export default function LuxuryLandingPage() {
           <span className="text-xs font-sans tracking-[0.3em] uppercase text-[#7C7C74] block">
             Com a bênção de Deus e de nossas famílias
           </span>
-          <h1 className="text-4xl sm:text-6xl font-serif text-[#1A1A19] font-normal tracking-tight">
-            Jeniffer & Rian
+          <h1 className="text-4xl sm:text-6xl font-serif text-[#1A1A19] font-normal tracking-tight flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+            <span>Jeniffer</span>
+            <span className="text-[#C5A880] text-2xl sm:text-4xl animate-pulse">♥</span>
+            <span>Rian</span>
           </h1>
           <p className="text-sm sm:text-base font-sans text-[#7C7C74] max-w-md mx-auto pt-1 leading-relaxed">
             Convidam para a celebração de seu matrimônio a realizar-se no dia 12 de Dezembro de 2026.

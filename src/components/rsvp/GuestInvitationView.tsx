@@ -120,8 +120,10 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
             <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.28em] uppercase text-[#7C7C74] block">
               Celebração de Casamento
             </span>
-            <h1 className="text-3xl sm:text-5xl font-serif font-normal tracking-tight text-[#1A1A19]">
-              Jeniffer & Rian
+            <h1 className="text-3xl sm:text-5xl font-serif font-normal tracking-tight text-[#1A1A19] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+              <span>Jeniffer</span>
+              <span className="text-[#C5A880] text-xl sm:text-3xl">♥</span>
+              <span>Rian</span>
             </h1>
           </div>
 

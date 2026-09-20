@@ -55,40 +55,34 @@ export function WeddingMonogram({
           className="opacity-60"
         />
 
-        {/* Letra 'J' em Itálico Nobre */}
+        {/* Letra 'J' Serifada Nobre e Nítida (sem barra central que confunde com F) */}
         <text
-          x="44"
-          y="62"
+          x="42"
+          y="65"
           fontFamily="var(--font-serif), 'Playfair Display', serif"
           fontSize="36"
-          fontStyle="italic"
-          fontWeight="400"
+          fontStyle="normal"
+          fontWeight="500"
           fill="#2C3328"
           textAnchor="middle"
         >
           J
         </text>
 
-        {/* Ampersand '&' Central Dourado Refinado */}
-        <text
-          x="58"
-          y="56"
-          fontFamily="var(--font-serif), 'Playfair Display', serif"
-          fontSize="18"
-          fontStyle="italic"
-          fontWeight="300"
+        {/* Coração Central Dourado Refinado (ao invés de &) */}
+        <path
+          d="M59 52 C59 49.5 56.5 48 54 48 C51.5 48 49.5 50 49.5 52.5 C49.5 56.5 54 60 59 63.5 C64 60 68.5 56.5 68.5 52.5 C68.5 50 66.5 48 64 48 C61.5 48 59 49.5 59 52 Z"
           fill="#C5A880"
-          textAnchor="middle"
-        >
-          &
-        </text>
+          className="opacity-90"
+        />
 
         {/* Letra 'R' Serifada Clássica com Traço Elegante */}
         <text
-          x="75"
-          y="66"
+          x="76"
+          y="65"
           fontFamily="var(--font-serif), 'Playfair Display', serif"
-          fontSize="34"
+          fontSize="36"
+          fontStyle="normal"
           fontWeight="500"
           fill="#2C3328"
           textAnchor="middle"
