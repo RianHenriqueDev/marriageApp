@@ -71,14 +71,14 @@ export function WeddingMonogram({
 
         {/* Coração Central Dourado Refinado (ao invés de &) */}
         <path
-          d="M59 52 C59 49.5 56.5 48 54 48 C51.5 48 49.5 50 49.5 52.5 C49.5 56.5 54 60 59 63.5 C64 60 68.5 56.5 68.5 52.5 C68.5 50 66.5 48 64 48 C61.5 48 59 49.5 59 52 Z"
+          d="M58 52 C58 49.5 55.5 48 53 48 C50.5 48 48.5 50 48.5 52.5 C48.5 56.5 53 60 58 63.5 C63 60 67.5 56.5 67.5 52.5 C67.5 50 65.5 48 63 48 C60.5 48 58 49.5 58 52 Z"
           fill="#C5A880"
           className="opacity-90"
         />
 
         {/* Letra 'R' Serifada Clássica com Traço Elegante */}
         <text
-          x="76"
+          x="79"
           y="65"
           fontFamily="var(--font-serif), 'Playfair Display', serif"
           fontSize="36"
