@@ -43,14 +43,14 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-surface-card rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 border border-border-hairline shadow-editorial-lg max-h-[94vh] flex flex-col justify-between animate-fade-up">
+      <div className="bg-surface-card rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3 sm:space-y-4 border border-border-hairline shadow-editorial-lg max-h-[94vh] flex flex-col justify-between animate-fade-up">
         {/* Cabeçalho do Modal */}
         <div className="flex items-center justify-between pb-2 border-b border-border-hairline">
           <div>
             <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
               Cartão Digital
             </span>
-            <h3 className="font-serif text-xl sm:text-2xl font-normal text-content-primary">
+            <h3 className="font-serif text-lg sm:text-2xl font-normal text-content-primary">
               Exportar Convite em Imagem
             </h3>
           </div>
@@ -66,7 +66,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
         <div className="overflow-y-auto flex-1 py-1 flex justify-center">
           <div
             ref={cardRef}
-            className="w-[320px] bg-canvas-base p-6 rounded-3xl border border-border-hairline shadow-editorial text-center space-y-4 relative overflow-hidden"
+            className="w-full max-w-[320px] bg-canvas-base p-5 sm:p-6 rounded-3xl border border-border-hairline shadow-editorial text-center space-y-3 sm:space-y-4 relative overflow-hidden"
           >
             {/* Monograma */}
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-card border border-border-hairline text-accent-olive mx-auto">

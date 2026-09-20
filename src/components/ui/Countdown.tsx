@@ -61,16 +61,16 @@ export function Countdown() {
   ];
 
   return (
-    <div className="flex justify-center items-center divide-x divide-[#C5A880]/30 py-4 max-w-sm mx-auto">
+    <div className="flex justify-center items-center divide-x divide-[#C5A880]/30 py-3 sm:py-4 max-w-sm mx-auto w-full">
       {items.map((item, idx) => (
         <div
           key={idx}
-          className="flex flex-col items-center px-3 sm:px-5 first:pl-0 last:pr-0"
+          className="flex flex-col items-center px-2 sm:px-4 md:px-5 first:pl-0 last:pr-0 flex-1"
         >
-          <span className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1A19] tracking-tight leading-none">
+          <span className="font-serif text-2xl sm:text-3xl md:text-4xl font-normal text-[#1A1A19] tracking-tight leading-none">
             {String(item.value).padStart(2, "0")}
           </span>
-          <span className="font-sans text-[9px] font-medium tracking-[0.25em] text-[#7C7C74] mt-2 uppercase">
+          <span className="font-sans text-[8.5px] sm:text-[9px] font-medium tracking-[0.18em] sm:tracking-[0.25em] text-[#7C7C74] mt-1.5 sm:mt-2 uppercase">
             {item.label}
           </span>
         </div>

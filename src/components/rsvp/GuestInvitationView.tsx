@@ -103,7 +103,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
   };
 
   return (
-    <div className="w-full max-w-[580px] mx-auto px-4 py-8 sm:py-14 animate-fade-up">
+    <div className="w-full max-w-[580px] mx-auto px-3 sm:px-6 py-6 sm:py-12 animate-fade-up">
       {/* 
         CARTÃO DE PAPELARIA DE LUXO (CONVITE PRENSADO EM LINHO):
         - Fundo branco linho suave
@@ -111,23 +111,23 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
         - Borda interna decorativa outline dourada suave com offset
         - Sombra nobre e difusa
       */}
-      <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/40 outline-offset-[-10px] sm:outline-offset-[-14px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-2xl p-7 sm:p-14 text-[#1A1A19] space-y-10">
+      <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/40 outline-offset-[-6px] sm:outline-offset-[-12px] md:outline-offset-[-14px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-2xl p-4 sm:p-8 md:p-12 text-[#1A1A19] space-y-8 sm:space-y-10">
         {/* TOPO: MONOGRAMA CIRCULAR VETORIAL (J & R) */}
-        <div className="text-center space-y-4 pt-2">
+        <div className="text-center space-y-3 sm:space-y-4 pt-1 sm:pt-2">
           <WeddingMonogram size="lg" className="mx-auto" />
 
           <div className="space-y-1 pt-1">
-            <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.28em] uppercase text-[#7C7C74] block">
+            <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.25em] sm:tracking-[0.28em] uppercase text-[#7C7C74] block">
               Celebração de Casamento
             </span>
-            <h1 className="text-3xl sm:text-5xl font-serif font-normal tracking-tight text-[#1A1A19] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight text-[#1A1A19] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
               <span>Jeniffer</span>
               <span className="text-[#C5A880] text-xl sm:text-3xl">♥</span>
               <span>Rian</span>
             </h1>
           </div>
 
-          <div className="w-16 h-[1px] bg-[#C5A880]/50 mx-auto my-3" />
+          <div className="w-16 h-[1px] bg-[#C5A880]/50 mx-auto my-2 sm:my-3" />
 
           {/* DEDICATÓRIA FORMAL AO CONVIDADO */}
           <div className="pt-1">
@@ -137,7 +137,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
             <h2 className="text-2xl sm:text-3xl font-serif text-[#2C3328] font-medium tracking-tight">
               {guest.name}
             </h2>
-            <p className="text-xs sm:text-sm font-sans text-[#7C7C74] mt-2.5 max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm font-sans text-[#7C7C74] mt-2 max-w-sm mx-auto leading-relaxed">
               Para testemunhar e celebrar a nossa união no dia 12 de Dezembro de 2026.
             </p>
           </div>
@@ -371,7 +371,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
             </div>
 
             {/* SELETORES DE CÔNJUGE E FILHOS (RESPOSTA DIRETA DO CONVIDADO) */}
-            <div className="p-5 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-4">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-3.5 sm:space-y-4">
               <div>
                 <span className="font-serif text-sm font-medium text-[#1A1A19] block">
                   Acompanhantes da Família
@@ -385,22 +385,22 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               <button
                 type="button"
                 onClick={() => setHasSpouse(!hasSpouse)}
-                className={`w-full p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                className={`w-full p-3 sm:p-3.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                   hasSpouse
                     ? "bg-white border-[#C5A880] shadow-sm text-[#1A1A19]"
                     : "bg-white/60 border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
                 }`}
               >
-                <div>
+                <div className="min-w-0 flex-1">
                   <span className="font-sans text-xs font-semibold block text-[#1A1A19]">
                     Cônjuge / Parceiro(a)
                   </span>
-                  <span className="text-[11px] font-sans text-[#7C7C74] block">
+                  <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
                     {hasSpouse ? "Presença confirmada" : "Não levará cônjuge"}
                   </span>
                 </div>
                 <div
-                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
                     hasSpouse
                       ? "bg-[#2C3328] border-[#2C3328] text-white"
                       : "border-[#C5A880]/60 bg-white"
@@ -411,29 +411,29 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               </button>
 
               {/* Opção Filhos com Contador */}
-              <div className="p-3.5 rounded-xl bg-white border border-[#E8E2D5] flex items-center justify-between">
-                <div>
+              <div className="p-3 sm:p-3.5 rounded-xl bg-white border border-[#E8E2D5] flex items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
                   <span className="font-sans text-xs font-semibold text-[#1A1A19] block">
                     Filho(s)
                   </span>
-                  <span className="text-[11px] font-sans text-[#7C7C74]">
+                  <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
                     {childrenCount === 0
                       ? "Nenhum filho acompanhando"
                       : `${childrenCount} filho(s) confirmado(s)`}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 bg-[#F8F6F0] border border-[#E8E2D5] px-2.5 py-1.5 rounded-full shadow-sm">
+                <div className="flex items-center gap-2.5 sm:gap-3 bg-[#F8F6F0] border border-[#E8E2D5] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full shadow-sm shrink-0">
                   <button
                     type="button"
                     disabled={childrenCount <= 0}
                     onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
-                    className="p-1 text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
                   >
                     <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </button>
 
-                  <span className="font-serif text-base font-medium text-[#1A1A19] min-w-[20px] text-center">
+                  <span className="font-serif text-sm sm:text-base font-medium text-[#1A1A19] min-w-[18px] text-center">
                     {childrenCount}
                   </span>
 
@@ -441,7 +441,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
                     type="button"
                     disabled={childrenCount >= 10}
                     onClick={() => setChildrenCount(Math.min(10, childrenCount + 1))}
-                    className="p-1 text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
                   >
                     <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </button>
@@ -449,9 +449,9 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               </div>
 
               {/* Resumo do Total de Presentes */}
-              <div className="pt-1 flex items-center justify-between text-xs font-sans text-[#2C3328] px-1">
+              <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] sm:text-xs font-sans text-[#2C3328] px-1 gap-1.5">
                 <span className="text-[#7C7C74]">Total de pessoas confirmadas:</span>
-                <span className="font-medium bg-white px-2.5 py-0.5 rounded-full border border-[#E8E2D5]">
+                <span className="font-medium bg-white px-2.5 py-1 rounded-full border border-[#E8E2D5] text-[11px] sm:text-xs">
                   {totalGuests} {totalGuests === 1 ? "pessoa" : "pessoas"} (você{hasSpouse ? " + cônjuge" : ""}{childrenCount > 0 ? ` + ${childrenCount} filho(s)` : ""})
                 </span>
               </div>

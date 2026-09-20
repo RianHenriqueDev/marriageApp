@@ -23,37 +23,37 @@ export default function LuxuryLandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8F6F0] text-[#1A1A19] flex flex-col justify-between py-10 px-4 sm:px-8 selection:bg-[#C5A880]/20 selection:text-[#2C3328]">
+    <main className="min-h-screen bg-[#F8F6F0] text-[#1A1A19] flex flex-col justify-between py-6 sm:py-10 px-3 sm:px-8 selection:bg-[#C5A880]/20 selection:text-[#2C3328]">
       {/* CABEÇALHO SUTIL */}
-      <header className="max-w-xl mx-auto w-full flex items-center justify-between text-[11px] font-sans tracking-[0.25em] uppercase text-[#7C7C74] pb-4">
+      <header className="max-w-xl mx-auto w-full flex items-center justify-between text-[10px] sm:text-[11px] font-sans tracking-[0.2em] sm:tracking-[0.25em] uppercase text-[#7C7C74] pb-3 sm:pb-4">
         <span>Convite Oficial</span>
         <span>12 • 12 • 2026</span>
       </header>
 
       {/* ÁREA CENTRAL PRINCIPAL */}
-      <section className="max-w-[580px] mx-auto w-full text-center my-auto py-8 sm:py-12 space-y-10 animate-fade-up">
+      <section className="max-w-[580px] mx-auto w-full text-center my-auto py-6 sm:py-12 space-y-8 sm:space-y-10 animate-fade-up">
         {/* MONOGRAMA J & R EM TAMANHO DESTACADO */}
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center pt-1 sm:pt-2">
           <WeddingMonogram size="xl" className="mx-auto" />
         </div>
 
         {/* NOMES EM TIPOGRAFIA PLAYFAIR DISPLAY EDITORIAL */}
-        <div className="space-y-3">
-          <span className="text-xs font-sans tracking-[0.3em] uppercase text-[#7C7C74] block">
+        <div className="space-y-2.5 sm:space-y-3">
+          <span className="text-[11px] sm:text-xs font-sans tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[#7C7C74] block">
             Com a bênção de Deus e de nossas famílias
           </span>
-          <h1 className="text-4xl sm:text-6xl font-serif text-[#1A1A19] font-normal tracking-tight flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#1A1A19] font-normal tracking-tight flex items-center justify-center gap-1.5 sm:gap-3 flex-wrap">
             <span>Jeniffer</span>
-            <span className="text-[#C5A880] text-2xl sm:text-4xl animate-pulse">♥</span>
+            <span className="text-[#C5A880] text-xl sm:text-3xl animate-pulse">♥</span>
             <span>Rian</span>
           </h1>
-          <p className="text-sm sm:text-base font-sans text-[#7C7C74] max-w-md mx-auto pt-1 leading-relaxed">
+          <p className="text-xs sm:text-base font-sans text-[#7C7C74] max-w-md mx-auto pt-1 leading-relaxed">
             Convidam para a celebração de seu matrimônio a realizar-se no dia 12 de Dezembro de 2026.
           </p>
         </div>
 
         {/* DIVISOR DELICADO */}
-        <div className="w-20 h-[1px] bg-[#C5A880]/60 mx-auto" />
+        <div className="w-16 sm:w-20 h-[1px] bg-[#C5A880]/60 mx-auto" />
 
         {/* CONTAGEM REGRESSIVA MINIMALISTA EM COLUNAS FINAS */}
         <div className="py-1">
@@ -65,7 +65,7 @@ export default function LuxuryLandingPage() {
           "Possui um convite exclusivo? Digite seu código de convidado:"
           com input de linha única (border-b border-[#C5A880] bg-transparent text-center)
         */}
-        <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-8px] shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-2xl p-6 sm:p-10 space-y-5 max-w-md mx-auto">
+        <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-6px] sm:outline-offset-[-8px] shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-2xl p-5 sm:p-10 space-y-4 sm:space-y-5 max-w-md mx-auto">
           <div className="space-y-1">
             <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold block">
               Acesso Restrito
@@ -97,7 +97,7 @@ export default function LuxuryLandingPage() {
 
             <button
               type="submit"
-              className="w-full py-3 px-6 rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-[11px] font-semibold tracking-[0.2em] uppercase transition-all cursor-pointer shadow-sm flex items-center justify-center gap-2 active:scale-[0.99]"
+              className="w-full py-3.5 px-6 min-h-[44px] rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-[11px] font-semibold tracking-[0.2em] uppercase transition-all cursor-pointer shadow-sm flex items-center justify-center gap-2 active:scale-[0.99]"
             >
               <span>ABRIR MEU CONVITE</span>
               <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />

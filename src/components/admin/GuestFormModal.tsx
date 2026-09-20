@@ -38,14 +38,14 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-      <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 animate-fade-up">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-7 space-y-4 sm:space-y-6 animate-fade-up max-h-[92vh] overflow-y-auto my-auto">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
             <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
               {guest ? "Editar Registro" : "Novo Convidado"}
             </span>
-            <h3 className="font-serif text-2xl font-normal text-content-primary">
+            <h3 className="font-serif text-xl sm:text-2xl font-normal text-content-primary">
               {guest ? guest.name : "Cadastrar Convidado"}
             </h3>
           </div>
@@ -74,7 +74,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
               required
               defaultValue={guest?.name || ""}
               placeholder="Ex: Tios Paulo & Lúcia, Carlos Moura"
-              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
+              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted text-sm sm:text-xs"
             />
           </div>
 
@@ -87,7 +87,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
               name="phone"
               defaultValue={guest?.phone || ""}
               placeholder="(16) 99999-9999"
-              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
+              className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted text-sm sm:text-xs"
             />
             <p className="text-[10px] text-content-muted mt-1">
               O convidado responderá diretamente no link se virá com cônjuge e a quantidade de filhos.
@@ -103,7 +103,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
                 <select
                   name="attendance"
                   defaultValue={guest.attendance}
-                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive"
+                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
                 >
                   <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
                   <option value={AttendanceSelection.ONLY_CEREMONY}>Apenas Cerimônia</option>
@@ -119,7 +119,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
                 <select
                   name="status"
                   defaultValue={guest.status}
-                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive"
+                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
                 >
                   <option value={RsvpState.CONFIRMED}>Confirmado</option>
                   <option value={RsvpState.PENDING}>Pendente</option>
@@ -133,14 +133,14 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
+              className="flex-1 py-3 min-h-[44px] rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer active:scale-[0.98]"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial"
+              className="flex-1 py-3 min-h-[44px] rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-wider uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial active:scale-[0.98]"
             >
               {loading ? "Salvando..." : guest ? "Salvar Alterações" : "Criar Convite"}
             </button>

@@ -52,14 +52,14 @@ export default async function FullGuestInvitationPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-canvas-base flex flex-col justify-between py-6 sm:py-10">
-      <header className="max-w-2xl mx-auto w-full px-6 flex items-center justify-between text-xs text-content-secondary">
+      <header className="max-w-2xl mx-auto w-full px-4 sm:px-6 flex items-center justify-between text-xs text-content-secondary">
         <Link
           href="/"
           className="font-serif tracking-wide hover:text-accent-olive transition-colors text-sm text-content-primary font-medium"
         >
           Jeniffer & Rian
         </Link>
-        <span className="text-[11px] font-sans tracking-[0.15em] text-content-muted uppercase">
+        <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.15em] text-content-muted uppercase">
           12.12.2026
         </span>
       </header>
@@ -68,7 +68,7 @@ export default async function FullGuestInvitationPage({ params }: PageProps) {
         <GuestInvitationView guest={guest} />
       </div>
 
-      <footer className="text-center text-xs text-content-muted py-4">
+      <footer className="px-4 text-center text-[11px] sm:text-xs text-content-muted py-4">
         1º Cartório de Registro Civil & Churrascaria JP Steakhouse • Ribeirão Preto
       </footer>
     </main>
