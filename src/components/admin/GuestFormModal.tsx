@@ -134,38 +134,53 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
           </div>
 
           {guest && (
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div>
-                <label className="block text-content-primary font-medium mb-1.5">
-                  Presença / Fases
-                </label>
-                <select
-                  name="attendance"
-                  defaultValue={guest.attendance}
-                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
-                >
-                  <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
-                  <option value={AttendanceSelection.ONLY_CEREMONY}>Apenas Cerimônia</option>
-                  <option value={AttendanceSelection.ONLY_RESTAURANT}>Apenas Almoço</option>
-                  <option value={AttendanceSelection.DECLINED}>Não comparecerá</option>
-                </select>
+            <>
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="block text-content-primary font-medium mb-1.5">
+                    Presença / Fases
+                  </label>
+                  <select
+                    name="attendance"
+                    defaultValue={guest.attendance}
+                    className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
+                  >
+                    <option value={AttendanceSelection.BOTH}>Cerimônia + Almoço</option>
+                    <option value={AttendanceSelection.ONLY_CEREMONY}>Apenas Cerimônia</option>
+                    <option value={AttendanceSelection.ONLY_RESTAURANT}>Apenas Almoço</option>
+                    <option value={AttendanceSelection.DECLINED}>Não comparecerá</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-content-primary font-medium mb-1.5">
+                    Status
+                  </label>
+                  <select
+                    name="status"
+                    defaultValue={guest.status}
+                    className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
+                  >
+                    <option value={RsvpState.CONFIRMED}>Confirmado</option>
+                    <option value={RsvpState.PENDING}>Pendente</option>
+                    <option value={RsvpState.DECLINED}>Ausente</option>
+                  </select>
+                </div>
               </div>
 
               <div>
                 <label className="block text-content-primary font-medium mb-1.5">
-                  Status
+                  Mensagem aos Noivos (Recado)
                 </label>
-                <select
-                  name="status"
-                  defaultValue={guest.status}
-                  className="w-full px-3 py-2.5 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive text-xs cursor-pointer"
-                >
-                  <option value={RsvpState.CONFIRMED}>Confirmado</option>
-                  <option value={RsvpState.PENDING}>Pendente</option>
-                  <option value={RsvpState.DECLINED}>Ausente</option>
-                </select>
+                <textarea
+                  name="guestMessage"
+                  defaultValue={guest.guestMessage || ""}
+                  rows={3}
+                  placeholder="Nenhum recado deixado pelo convidado."
+                  className="w-full px-4 py-3 bg-canvas-subtle/60 border border-border-hairline rounded-xl text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted text-xs leading-relaxed"
+                />
               </div>
-            </div>
+            </>
           )}
 
           <div className="flex gap-3 pt-4 border-t border-border-hairline">

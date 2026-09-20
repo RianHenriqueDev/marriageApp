@@ -80,6 +80,8 @@ export async function updateGuest(id: string, formData: FormData) {
     const status = (formData.get("status") as RsvpState) || RsvpState.PENDING;
     const category = (formData.get("category") as GuestCategory) || GuestCategory.MUTUAL_FRIEND;
 
+    const guestMessage = (formData.get("guestMessage") as string) || null;
+
     if (!name || name.trim().length === 0) {
       return { success: false, error: "O nome é obrigatório." };
     }
@@ -94,6 +96,7 @@ export async function updateGuest(id: string, formData: FormData) {
         attendance,
         status,
         category,
+        guestMessage: guestMessage ? guestMessage.trim() : null,
       },
     });
 

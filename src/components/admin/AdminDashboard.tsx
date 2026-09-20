@@ -14,10 +14,12 @@ import {
   Plus,
   Search,
   MessageCircle,
+  MessageSquareQuote,
 } from "lucide-react";
 import { deleteGuest } from "@/app/admin/actions";
 import { InviteImageModal } from "./InviteImageModal";
 import { GuestFormModal } from "./GuestFormModal";
+import { GuestMessageModal } from "./GuestMessageModal";
 import { Guest, AttendanceSelection, RsvpState, GuestCategory } from "@prisma/client";
 
 export const GUEST_CATEGORY_LABELS: Record<GuestCategory, { label: string; tag: string }> = {
@@ -47,6 +49,7 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
   // Modais
   const [imageModalGuest, setImageModalGuest] = useState<Guest | null>(null);
   const [formModalGuest, setFormModalGuest] = useState<Guest | null>(null);
+  const [messageModalGuest, setMessageModalGuest] = useState<Guest | null>(null);
   const [isNewGuestOpen, setIsNewGuestOpen] = useState(false);
 
   // Métricas
@@ -289,8 +292,24 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                           )}
                         </div>
                         {guest.guestMessage && (
-                          <div className="text-[11px] text-accent-olive italic truncate max-w-xs mt-0.5">
-                            &ldquo;{guest.guestMessage}&rdquo;
+                          <div className="mt-1.5 flex items-start gap-1.5 max-w-sm">
+                            <button
+                              type="button"
+                              onClick={() => setMessageModalGuest(guest)}
+                              title="Clique para ler a mensagem completa"
+                              className="text-left group/msg p-1.5 -ml-1.5 rounded-lg hover:bg-canvas-subtle transition-colors cursor-pointer block"
+                            >
+                              <div className="flex items-center gap-1 text-[10px] font-medium text-accent-gold uppercase tracking-wider">
+                                <MessageSquareQuote className="w-3 h-3 text-accent-gold" />
+                                <span>Recado dos noivos</span>
+                              </div>
+                              <p className="text-[11px] text-content-secondary group-hover/msg:text-content-primary italic line-clamp-2 mt-0.5 leading-snug">
+                                &ldquo;{guest.guestMessage}&rdquo;
+                              </p>
+                              <span className="text-[9.5px] text-accent-olive font-medium group-hover/msg:underline mt-0.5 inline-block">
+                                Ver mensagem completa →
+                              </span>
+                            </button>
                           </div>
                         )}
                       </td>
@@ -357,6 +376,18 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                               <Copy className="w-4 h-4" />
                             )}
                           </button>
+
+                          {/* Ler Mensagem do Convidado */}
+                          {guest.guestMessage && (
+                            <button
+                              type="button"
+                              onClick={() => setMessageModalGuest(guest)}
+                              title="Ler mensagem completa do convidado"
+                              className="p-1.5 rounded-full hover:bg-amber-50 text-accent-gold hover:text-amber-800 transition-colors cursor-pointer"
+                            >
+                              <MessageSquareQuote className="w-4 h-4" />
+                            </button>
+                          )}
 
                           {/* WhatsApp */}
                           <button
@@ -501,9 +532,25 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
 
                   {/* Mensagem do Convidado */}
                   {guest.guestMessage && (
-                    <div className="text-[11px] font-sans text-accent-olive/90 italic bg-canvas-subtle/30 px-3 py-2 rounded-lg border-l-2 border-accent-gold">
-                      &ldquo;{guest.guestMessage}&rdquo;
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setMessageModalGuest(guest)}
+                      title="Toque para abrir mensagem completa"
+                      className="w-full text-left p-3 rounded-xl bg-canvas-subtle/60 border border-border-hairline/80 space-y-1 hover:border-accent-gold transition-colors group cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-sans font-medium text-accent-gold uppercase tracking-wider">
+                        <span className="flex items-center gap-1">
+                          <MessageSquareQuote className="w-3.5 h-3.5" />
+                          <span>Mensagem aos Noivos</span>
+                        </span>
+                        <span className="text-accent-olive font-semibold group-hover:underline text-[10px]">
+                          Ver tudo →
+                        </span>
+                      </div>
+                      <p className="text-xs font-serif italic text-content-primary leading-relaxed line-clamp-3">
+                        &ldquo;{guest.guestMessage}&rdquo;
+                      </p>
+                    </button>
                   )}
 
                   {/* Barra de Ações Touch-Friendly */}
@@ -604,6 +651,13 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
         <InviteImageModal
           guest={imageModalGuest}
           onClose={() => setImageModalGuest(null)}
+        />
+      )}
+
+      {messageModalGuest && (
+        <GuestMessageModal
+          guest={messageModalGuest}
+          onClose={() => setMessageModalGuest(null)}
         />
       )}
     </div>
