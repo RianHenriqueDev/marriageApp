@@ -46,7 +46,7 @@ export function GuestFormModal({ guest, onClose, onGuestSaved }: GuestFormModalP
 
   return (
     <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4">
-      <div className="bg-surface-card border border-border-hairline rounded-2xl sm:rounded-3xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-fade-up max-h-[85vh] overflow-y-auto">
+      <div className="bg-surface-card border border-border-hairline shadow-none rounded-2xl sm:rounded-3xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-fade-up max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-border-hairline">
           <div>
             <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">

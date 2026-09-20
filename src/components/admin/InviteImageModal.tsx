@@ -50,7 +50,7 @@ export function InviteImageModal({ guest, onClose }: InviteImageModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4">
-      <div className="bg-surface-card rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3 sm:space-y-4 border border-border-hairline max-h-[85vh] flex flex-col justify-between animate-fade-up">
+      <div className="bg-surface-card rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3 sm:space-y-4 border border-border-hairline shadow-none max-h-[85vh] flex flex-col justify-between animate-fade-up">
         {/* Cabeçalho do Modal */}
         <div className="flex items-center justify-between pb-2 border-b border-border-hairline">
           <div>
