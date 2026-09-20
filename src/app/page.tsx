@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Countdown } from "@/components/ui/Countdown";
-import { Heart, ChevronRight, Shield } from "lucide-react";
+import { WeddingMonogram } from "@/components/ui/WeddingMonogram";
+import { Shield, ArrowRight } from "lucide-react";
 
-export default function QuietLuxuryLandingPage() {
+export default function LuxuryLandingPage() {
   const router = useRouter();
   const [tokenInput, setTokenInput] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleAccessInvite = (e: React.FormEvent) => {
@@ -23,158 +23,98 @@ export default function QuietLuxuryLandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-canvas-base text-content-primary flex flex-col justify-between py-8 px-4 sm:px-8">
-      {/* HEADER SUPERIOR DISCRETO */}
-      <header className="max-w-4xl mx-auto w-full flex items-center justify-between py-4 text-xs font-sans tracking-[0.2em] uppercase text-content-secondary border-b border-border-hairline/70">
-        <div className="flex items-center gap-2">
-          <Heart className="w-3.5 h-3.5 text-accent-olive" strokeWidth={1.5} />
-          <span>Convite de Casamento</span>
-        </div>
-        <span>12 de Dezembro de 2026</span>
+    <main className="min-h-screen bg-[#F8F6F0] text-[#1A1A19] flex flex-col justify-between py-10 px-4 sm:px-8 selection:bg-[#C5A880]/20 selection:text-[#2C3328]">
+      {/* CABEÇALHO SUTIL */}
+      <header className="max-w-xl mx-auto w-full flex items-center justify-between text-[11px] font-sans tracking-[0.25em] uppercase text-[#7C7C74] pb-4">
+        <span>Convite Oficial</span>
+        <span>12 • 12 • 2026</span>
       </header>
 
-      {/* HERO SECTION EDITORIAL */}
-      <section className="max-w-3xl mx-auto w-full text-center my-auto py-12 sm:py-16 space-y-8 animate-fade-up">
-        {/* Monograma */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-card border border-border-hairline shadow-editorial text-accent-olive">
-          <span className="font-serif text-2xl font-light tracking-wider">J & R</span>
+      {/* ÁREA CENTRAL PRINCIPAL */}
+      <section className="max-w-[580px] mx-auto w-full text-center my-auto py-8 sm:py-12 space-y-10 animate-fade-up">
+        {/* MONOGRAMA J & R EM TAMANHO DESTACADO */}
+        <div className="flex justify-center pt-2">
+          <WeddingMonogram size="xl" className="mx-auto" />
         </div>
 
-        {/* Título Principal */}
+        {/* NOMES EM TIPOGRAFIA PLAYFAIR DISPLAY EDITORIAL */}
         <div className="space-y-3">
-          <span className="text-xs sm:text-sm font-sans tracking-[0.3em] uppercase text-content-secondary block">
-            A celebração do nosso amor
+          <span className="text-xs font-sans tracking-[0.3em] uppercase text-[#7C7C74] block">
+            Com a bênção de Deus e de nossas famílias
           </span>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif text-content-primary font-normal tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-serif text-[#1A1A19] font-normal tracking-tight">
             Jeniffer & Rian
           </h1>
-          <p className="text-base sm:text-lg font-sans text-content-secondary max-w-xl mx-auto pt-2 leading-relaxed">
-            Com imensa alegria e bênçãos no coração, convidamos você para celebrar
-            conosco o momento mais especial de nossas vidas.
+          <p className="text-sm sm:text-base font-sans text-[#7C7C74] max-w-md mx-auto pt-1 leading-relaxed">
+            Convidam para a celebração de seu matrimônio a realizar-se no dia doze de Dezembro de dois mil e vinte e seis.
           </p>
         </div>
 
         {/* DIVISOR DELICADO */}
-        <div className="gold-divider w-32 mx-auto" />
+        <div className="w-20 h-[1px] bg-[#C5A880]/60 mx-auto" />
 
-        {/* CONTADOR REGRESSIVO */}
-        <div className="max-w-md mx-auto">
+        {/* CONTAGEM REGRESSIVA MINIMALISTA EM COLUNAS FINAS */}
+        <div className="py-1">
           <Countdown />
         </div>
 
-        {/* CARDS COM OS DOIS MOMENTOS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left pt-4">
-          {/* Momento 1 */}
-          <div className="p-5 rounded-2xl bg-surface-card border border-border-hairline shadow-editorial space-y-2">
-            <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
-              1º Momento • 10:30h
+        {/* 
+          CAMPO CENTRAL EM FORMATO DE ENVELOPE DELICADO:
+          "Possui um convite exclusivo? Digite seu código de convidado:"
+          com input de linha única (border-b border-[#C5A880] bg-transparent text-center)
+        */}
+        <div className="relative bg-white border border-[#E8E2D5] outline outline-1 outline-[#C5A880]/30 outline-offset-[-8px] shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-2xl p-6 sm:p-10 space-y-5 max-w-md mx-auto">
+          <div className="space-y-1">
+            <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold block">
+              Acesso Restrito
             </span>
-            <h3 className="font-serif text-lg font-medium text-content-primary">
-              Cerimônia Civil
-            </h3>
-            <p className="text-xs text-content-secondary leading-relaxed">
-              1º Cartório de Registro Civil de Ribeirão Preto
-              <br />
-              <span className="text-content-muted">Rua Visconde de Inhaúma, 1315 — Centro</span>
+            <p className="text-xs sm:text-sm font-serif text-[#1A1A19]">
+              Possui um convite exclusivo?
+            </p>
+            <p className="text-[11px] font-sans text-[#7C7C74]">
+              Digite seu código de convidado:
             </p>
           </div>
 
-          {/* Momento 2 */}
-          <div className="p-5 rounded-2xl bg-surface-card border border-border-hairline shadow-editorial space-y-2">
-            <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
-              2º Momento • ~12:30h
-            </span>
-            <h3 className="font-serif text-lg font-medium text-content-primary">
-              Almoço de Celebração
-            </h3>
-            <p className="text-xs text-content-secondary leading-relaxed">
-              Churrascaria JP Steakhouse (Por Adesão)
-              <br />
-              <span className="text-content-muted">Av. Alice de Moura Bragheto, 76 — City Ribeirão</span>
-            </p>
-          </div>
-        </div>
+          <form onSubmit={handleAccessInvite} className="space-y-4 pt-1">
+            <div>
+              <input
+                type="text"
+                value={tokenInput}
+                onChange={(e) => {
+                  setTokenInput(e.target.value);
+                  setErrorMessage("");
+                }}
+                placeholder="ex: tios-paulo-e-lucia"
+                className="w-full py-2.5 bg-transparent border-b border-[#C5A880] text-center text-sm font-sans text-[#1A1A19] placeholder:text-[#9E9E96]/60 placeholder:text-xs focus:outline-none focus:border-[#2C3328] transition-colors"
+              />
+              {errorMessage && (
+                <p className="text-[11px] font-sans text-red-700 mt-2">{errorMessage}</p>
+              )}
+            </div>
 
-        {/* BOTÃO PRINCIPAL DE ACESSO */}
-        <div className="pt-6 flex flex-col items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="px-8 py-4 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold tracking-[0.15em] uppercase hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial flex items-center gap-2"
-          >
-            <span>Acessar Meu Convite e Confirmar</span>
-            <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
-          </button>
-          <p className="text-xs text-content-muted">
-            Insira o link ou código exclusivo recebido via WhatsApp
-          </p>
+            <button
+              type="submit"
+              className="w-full py-3 px-6 rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-[11px] font-semibold tracking-[0.2em] uppercase transition-all cursor-pointer shadow-sm flex items-center justify-center gap-2 active:scale-[0.99]"
+            >
+              <span>ABRIR MEU CONVITE</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* FOOTER DISCRETO */}
-      <footer className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-border-hairline/70 text-xs font-sans text-content-muted">
-        <div>12 de Dezembro de 2026 • Ribeirão Preto - SP</div>
+      {/* FOOTER DELICADO */}
+      <footer className="max-w-xl mx-auto w-full flex items-center justify-between pt-6 border-t border-[#E8E2D5] text-[11px] font-sans text-[#9E9E96]">
+        <span>Ribeirão Preto — SP</span>
         <Link
           href="/admin"
-          className="hover:text-content-primary transition-colors flex items-center gap-1.5"
+          className="hover:text-[#2C3328] transition-colors flex items-center gap-1"
         >
-          <Shield className="w-3.5 h-3.5 text-accent-gold" strokeWidth={1.5} />
+          <Shield className="w-3 h-3 text-[#C5A880]" strokeWidth={1.5} />
           <span>Acesso dos Noivos</span>
         </Link>
       </footer>
-
-      {/* MODAL DE BUSCA POR CÓDIGO */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-content-primary/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface-card border border-border-hairline shadow-editorial-lg rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 animate-fade-up">
-            <div className="space-y-1">
-              <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-accent-olive font-semibold block">
-                Localizar Convite
-              </span>
-              <h3 className="font-serif text-2xl font-normal text-content-primary">
-                Acessar seu Convite
-              </h3>
-              <p className="text-xs text-content-secondary leading-relaxed pt-1">
-                Digite o código ou nome enviado pelos noivos para visualizar seus detalhes e confirmar sua presença:
-              </p>
-            </div>
-
-            <form onSubmit={handleAccessInvite} className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  value={tokenInput}
-                  onChange={(e) => {
-                    setTokenInput(e.target.value);
-                    setErrorMessage("");
-                  }}
-                  placeholder="Ex: tios-paulo-e-lucia"
-                  className="w-full px-4 py-3 rounded-xl bg-canvas-subtle/70 border border-border-hairline text-sm font-sans text-content-primary focus:outline-none focus:border-accent-olive focus:bg-surface-card transition-all placeholder:text-content-muted"
-                />
-                {errorMessage && (
-                  <p className="text-xs text-red-600 mt-1">{errorMessage}</p>
-                )}
-              </div>
-
-              <div className="flex gap-2.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3 rounded-full bg-canvas-subtle text-content-secondary font-sans text-xs hover:bg-canvas-subtle/80 transition-all cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 rounded-full bg-accent-olive text-white font-sans text-xs font-semibold uppercase tracking-wider hover:bg-accent-olive-hover transition-all cursor-pointer shadow-editorial"
-                >
-                  Acessar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
