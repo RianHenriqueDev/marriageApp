@@ -262,7 +262,7 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
               Mas, para quem deseja nos presentear de coração, criamos este cantinho especial! Aqui, você pode contribuir com qualquer valor e fazer parte dos nossos planos e sonhos. Não existe quantia certa, nem obrigação: o maior presente é compartilhar esse momento com pessoas queridas. Se esse for o seu desejo, receberemos seu carinho com muito amor e gratidão! 🥂
             </p>
           </div>
-        </div>
+
 
 
         {/* CARD NOBRE COM CHAVE PIX E BOTÃO DE ACESSO */}
