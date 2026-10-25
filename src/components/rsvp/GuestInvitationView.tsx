@@ -11,6 +11,9 @@ import {
   ChevronRight,
   Minus,
   Plus,
+  Gift,
+  Copy,
+  Sparkles,
 } from "lucide-react";
 
 interface GuestInvitationViewProps {
@@ -38,13 +41,13 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
   // Estados dos checkboxes independentes de momentos
   const [attendingCeremony, setAttendingCeremony] = useState<boolean>(
     guest.attendance === AttendanceSelection.BOTH ||
-      guest.attendance === AttendanceSelection.ONLY_CEREMONY ||
-      guest.status === RsvpState.PENDING
+    guest.attendance === AttendanceSelection.ONLY_CEREMONY ||
+    guest.status === RsvpState.PENDING
   );
   const [attendingLunch, setAttendingLunch] = useState<boolean>(
     guest.attendance === AttendanceSelection.BOTH ||
-      guest.attendance === AttendanceSelection.ONLY_RESTAURANT ||
-      guest.status === RsvpState.PENDING
+    guest.attendance === AttendanceSelection.ONLY_RESTAURANT ||
+    guest.status === RsvpState.PENDING
   );
 
   // Seletores autônomos de Cônjuge e Filhos
@@ -57,6 +60,17 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
   const [message, setMessage] = useState<string>(guest.guestMessage || "");
   const [loading, setLoading] = useState(false);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
+  const [copiedPix, setCopiedPix] = useState(false);
+
+  const VAKINHA_URL =
+    "https://www.vakinha.com.br/6411357?utm_campaign=whatsapp&utm_medium=website&utm_content=6411357&utm_source=social-shares";
+  const VAKINHA_PIX = "6411357@vakinha.com.br";
+
+  const handleCopyPix = () => {
+    navigator.clipboard.writeText(VAKINHA_PIX);
+    setCopiedPix(true);
+    setTimeout(() => setCopiedPix(false), 2500);
+  };
 
   const isConfirmed = currentStatus === RsvpState.CONFIRMED;
   const isDeclined = currentStatus === RsvpState.DECLINED;
@@ -227,282 +241,350 @@ export function GuestInvitationView({ guest }: GuestInvitationViewProps) {
           </div>
         </div>
 
-        {/* FEEDBACK DE ERRO */}
-        {feedbackError && (
-          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 font-sans">
-            {feedbackError}
-          </div>
-        )}
 
-        {/* STATUS CONFIRMADO OU FORMULÁRIO */}
-        {isConfirmed ? (
-          <div className="text-center p-6 sm:p-8 bg-[#F8F6F0] border border-[#E8E2D5] rounded-xl space-y-3 animate-fade-in">
-            <div className="w-10 h-10 rounded-full bg-[#2C3328] text-white flex items-center justify-center mx-auto">
-              <Check className="w-5 h-5" strokeWidth={2} />
+        {/* SEÇÃO EDITORIAL: PRESENTE AOS NOIVOS / VAQUINHA OFICIAL */}
+        <div className="space-y-5 pt-3 border-t border-[#E8E2D5]">
+          <div className="text-center space-y-1.5">
+            <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-[#F5EFEB] border border-[#E2D9CC] text-[10px] font-sans tracking-[0.22em] uppercase text-[#C5A880] font-semibold">
+              <Gift className="w-3.5 h-3.5 text-[#C5A880]" strokeWidth={1.8} />
+              <span>Lista de Presentes • Mimo aos Noivos</span>
             </div>
 
-            <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold block">
-              Presença Confirmada
-            </span>
-
-            <h3 className="font-serif text-2xl text-[#1A1A19] font-normal">
-              Agradecemos de coração, {guest.name}!
+            <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A19] font-normal tracking-tight">
+              Nosso cantinho já está completo, mas ainda cabe um pouquinho de carinho! ❤️
             </h3>
 
-            <p className="text-xs font-sans text-[#7C7C74] max-w-sm mx-auto leading-relaxed">
-              Sua resposta foi registrada com sucesso.
-              {totalGuests > 1 ? (
-                <span className="block mt-1 text-[#2C3328] font-medium">
-                  {totalGuests} pessoas confirmadas
-                  {hasSpouse && " (você + cônjuge"}
-                  {childrenCount > 0 && (hasSpouse ? ` + ${childrenCount} filho(s))` : ` (você + ${childrenCount} filho(s))`)}
-                  {!hasSpouse && childrenCount === 0 && ")"}
-                </span>
-              ) : (
-                <span className="block mt-1 text-[#2C3328] font-medium">
-                  Presença confirmada individualmente.
-                </span>
-              )}
+            <p className="text-xs sm:text-[13px] font-sans text-[#7C7C74] max-w-md mx-auto leading-relaxed pt-1">
+              Com a graça de Deus, estamos construindo nosso lar e já temos tudo o que precisamos para começar essa nova fase juntos. Por isso, decidimos não fazer uma lista tradicional de presentes.
             </p>
 
-            <div className="text-[11px] font-sans text-[#2C3328] font-medium pt-1">
-              {currentAttendance === AttendanceSelection.BOTH && "• Cerimônia Civil no Cartório e Almoço na JP Steakhouse"}
-              {currentAttendance === AttendanceSelection.ONLY_CEREMONY && "• Apenas Cerimônia Civil no Cartório"}
-              {currentAttendance === AttendanceSelection.ONLY_RESTAURANT && "• Apenas Almoço na JP Steakhouse"}
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => setCurrentStatus(RsvpState.PENDING)}
-                className="text-xs font-sans text-[#7C7C74] hover:text-[#2C3328] underline transition-colors cursor-pointer"
-              >
-                Deseja alterar sua resposta?
-              </button>
-            </div>
-          </div>
-        ) : isDeclined ? (
-          <div className="text-center p-6 sm:p-8 bg-[#F8F6F0] border border-[#E8E2D5] rounded-xl space-y-3 animate-fade-in">
-            <h3 className="font-serif text-2xl text-[#1A1A19] font-normal">
-              Compreendemos com todo carinho
-            </h3>
-            <p className="text-xs font-sans text-[#7C7C74] max-w-sm mx-auto leading-relaxed">
-              Sentiremos sua falta, mas sabemos que estará torcendo por nós com bênçãos no coração!
+            <p className="text-xs sm:text-[13px] font-sans text-[#5A5A55] max-w-md mx-auto leading-relaxed">
+              Mas, para quem deseja nos presentear de coração, criamos este cantinho especial! Aqui, você pode contribuir com qualquer valor e fazer parte dos nossos planos e sonhos. Não existe quantia certa, nem obrigação: o maior presente é compartilhar esse momento com pessoas queridas. Se esse for o seu desejo, receberemos seu carinho com muito amor e gratidão! 🥂
             </p>
-            <button
-              type="button"
-              onClick={() => setCurrentStatus(RsvpState.PENDING)}
-              className="text-xs font-sans text-[#2C3328] underline transition-colors cursor-pointer pt-1"
-            >
-              Mudei de ideia, desejo confirmar presença
-            </button>
           </div>
-        ) : (
-          /* FORMULÁRIO EDITORIAL COM CHECKBOXES E CONTADORES */
-          <div className="space-y-6 pt-2 border-t border-[#E8E2D5]">
-            <div className="text-center space-y-1">
-              <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#7C7C74] font-medium block">
-                Confirmação de Presença
+        </div>
+
+
+        {/* CARD NOBRE COM CHAVE PIX E BOTÃO DE ACESSO */}
+        <div className="p-4 sm:p-6 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-4 shadow-sm">
+          {/* Bloco Chave PIX */}
+          <div className="bg-white p-4 rounded-xl border border-[#E8E2D5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-none">
+            <div className="space-y-0.5 text-left">
+              <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-[#9E9E96] font-semibold block">
+                Chave PIX da Vaquinha (E-mail)
               </span>
-              <p className="text-xs font-sans text-[#9E9E96]">
-                Marque abaixo em quais momentos teremos a alegria de sua companhia:
+              <p className="font-mono text-xs sm:text-sm font-semibold text-[#2C3328] select-all break-all">
+                6411357@vakinha.com.br
               </p>
             </div>
 
-            {/* CHECKBOXES ELEGANTE DE MOMENTOS INDEPENDENTES */}
-            <div className="space-y-2.5">
-              {/* Opção Cerimônia */}
-              <button
-                type="button"
-                onClick={() => setAttendingCeremony(!attendingCeremony)}
-                className={`w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                  attendingCeremony
-                    ? "bg-[#F5EFEB] border-[#C5A880] text-[#1A1A19]"
-                    : "bg-white border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
-                }`}
-              >
-                <div>
-                  <span className="font-serif text-sm font-medium block text-[#1A1A19]">
-                    Cerimônia Civil no Cartório
-                  </span>
-                  <span className="text-[11px] font-sans text-[#7C7C74] block mt-0.5">
-                    10:30h • Rua Visconde de Inhaúma, 1315
-                  </span>
-                </div>
-                <div
-                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                    attendingCeremony
-                      ? "bg-[#2C3328] border-[#2C3328] text-white"
-                      : "border-[#C5A880]/60 bg-white"
-                  }`}
-                >
-                  {attendingCeremony && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
-                </div>
-              </button>
+            <button
+              type="button"
+              onClick={handleCopyPix}
+              className="w-full sm:w-auto py-2.5 px-4 rounded-lg bg-[#F8F6F0] hover:bg-[#2C3328] hover:text-white text-[#2C3328] border border-[#E8E2D5] hover:border-[#2C3328] text-xs font-sans font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 active:scale-95"
+            >
+              {copiedPix ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2.5} />
+                  <span className="text-emerald-700 font-semibold">Chave Copiada!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  <span>Copiar Chave PIX</span>
+                </>
+              )}
+            </button>
+          </div>
 
-              {/* Opção Almoço */}
-              <button
-                type="button"
-                onClick={() => setAttendingLunch(!attendingLunch)}
-                className={`w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                  attendingLunch
-                    ? "bg-[#F5EFEB] border-[#C5A880] text-[#1A1A19]"
-                    : "bg-white border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
-                }`}
-              >
-                <div>
-                  <span className="font-serif text-sm font-medium block text-[#1A1A19]">
-                    Almoço na JP Steakhouse
-                  </span>
-                  <span className="text-[11px] font-sans text-[#7C7C74] block mt-0.5">
-                    12:00h • Almoço por adesão individual
-                  </span>
-                </div>
-                <div
-                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                    attendingLunch
-                      ? "bg-[#2C3328] border-[#2C3328] text-white"
-                      : "border-[#C5A880]/60 bg-white"
-                  }`}
-                >
-                  {attendingLunch && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
-                </div>
-              </button>
-            </div>
+          {/* Botão para o site da Vaquinha */}
+          <a
+            href={VAKINHA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3.5 px-6 min-h-[44px] rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-xs font-semibold tracking-[0.18em] uppercase transition-all cursor-pointer shadow-editorial active:scale-[0.99] flex items-center justify-center gap-2 text-center"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" strokeWidth={1.75} />
+            <span>Contribuir na Vaquinha Online</span>
+            <ExternalLink className="w-3.5 h-3.5 ml-1" strokeWidth={1.5} />
+          </a>
 
-            {/* SELETORES DE CÔNJUGE E FILHOS (RESPOSTA DIRETA DO CONVIDADO) */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-3.5 sm:space-y-4">
+          <p className="text-[11px] font-sans text-center text-[#9E9E96] italic">
+            Lembrando que o seu abraço e a sua companhia no dia 12 de Dezembro são o nosso maior presente! ❤️
+          </p>
+        </div>
+      </div>
+
+      {/* FEEDBACK DE ERRO */}
+      {feedbackError && (
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 font-sans">
+          {feedbackError}
+        </div>
+      )}
+
+      {/* STATUS CONFIRMADO OU FORMULÁRIO */}
+      {isConfirmed ? (
+        <div className="text-center p-6 sm:p-8 bg-[#F8F6F0] border border-[#E8E2D5] rounded-xl space-y-3 animate-fade-in">
+          <div className="w-10 h-10 rounded-full bg-[#2C3328] text-white flex items-center justify-center mx-auto">
+            <Check className="w-5 h-5" strokeWidth={2} />
+          </div>
+
+          <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#C5A880] font-semibold block">
+            Presença Confirmada
+          </span>
+
+          <h3 className="font-serif text-2xl text-[#1A1A19] font-normal">
+            Agradecemos de coração, {guest.name}!
+          </h3>
+
+          <p className="text-xs font-sans text-[#7C7C74] max-w-sm mx-auto leading-relaxed">
+            Sua resposta foi registrada com sucesso.
+            {totalGuests > 1 ? (
+              <span className="block mt-1 text-[#2C3328] font-medium">
+                {totalGuests} pessoas confirmadas
+                {hasSpouse && " (você + cônjuge"}
+                {childrenCount > 0 && (hasSpouse ? ` + ${childrenCount} filho(s))` : ` (você + ${childrenCount} filho(s))`)}
+                {!hasSpouse && childrenCount === 0 && ")"}
+              </span>
+            ) : (
+              <span className="block mt-1 text-[#2C3328] font-medium">
+                Presença confirmada individualmente.
+              </span>
+            )}
+          </p>
+
+          <div className="text-[11px] font-sans text-[#2C3328] font-medium pt-1">
+            {currentAttendance === AttendanceSelection.BOTH && "• Cerimônia Civil no Cartório e Almoço na JP Steakhouse"}
+            {currentAttendance === AttendanceSelection.ONLY_CEREMONY && "• Apenas Cerimônia Civil no Cartório"}
+            {currentAttendance === AttendanceSelection.ONLY_RESTAURANT && "• Apenas Almoço na JP Steakhouse"}
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => setCurrentStatus(RsvpState.PENDING)}
+              className="text-xs font-sans text-[#7C7C74] hover:text-[#2C3328] underline transition-colors cursor-pointer"
+            >
+              Deseja alterar sua resposta?
+            </button>
+          </div>
+        </div>
+      ) : isDeclined ? (
+        <div className="text-center p-6 sm:p-8 bg-[#F8F6F0] border border-[#E8E2D5] rounded-xl space-y-3 animate-fade-in">
+          <h3 className="font-serif text-2xl text-[#1A1A19] font-normal">
+            Compreendemos com todo carinho
+          </h3>
+          <p className="text-xs font-sans text-[#7C7C74] max-w-sm mx-auto leading-relaxed">
+            Sentiremos sua falta, mas sabemos que estará torcendo por nós com bênçãos no coração!
+          </p>
+          <button
+            type="button"
+            onClick={() => setCurrentStatus(RsvpState.PENDING)}
+            className="text-xs font-sans text-[#2C3328] underline transition-colors cursor-pointer pt-1"
+          >
+            Mudei de ideia, desejo confirmar presença
+          </button>
+        </div>
+      ) : (
+        /* FORMULÁRIO EDITORIAL COM CHECKBOXES E CONTADORES */
+        <div className="space-y-6 pt-2 border-t border-[#E8E2D5]">
+          <div className="text-center space-y-1">
+            <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#7C7C74] font-medium block">
+              Confirmação de Presença
+            </span>
+            <p className="text-xs font-sans text-[#9E9E96]">
+              Marque abaixo em quais momentos teremos a alegria de sua companhia:
+            </p>
+          </div>
+
+          {/* CHECKBOXES ELEGANTE DE MOMENTOS INDEPENDENTES */}
+          <div className="space-y-2.5">
+            {/* Opção Cerimônia */}
+            <button
+              type="button"
+              onClick={() => setAttendingCeremony(!attendingCeremony)}
+              className={`w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${attendingCeremony
+                ? "bg-[#F5EFEB] border-[#C5A880] text-[#1A1A19]"
+                : "bg-white border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
+                }`}
+            >
               <div>
-                <span className="font-serif text-sm font-medium text-[#1A1A19] block">
-                  Acompanhantes da Família
+                <span className="font-serif text-sm font-medium block text-[#1A1A19]">
+                  Cerimônia Civil no Cartório
                 </span>
-                <span className="text-[11px] font-sans text-[#7C7C74]">
-                  Informe se você virá acompanhado(a) de seu cônjuge e/ou filho(s):
+                <span className="text-[11px] font-sans text-[#7C7C74] block mt-0.5">
+                  10:30h • Rua Visconde de Inhaúma, 1315
                 </span>
               </div>
-
-              {/* Opção Cônjuge */}
-              <button
-                type="button"
-                onClick={() => setHasSpouse(!hasSpouse)}
-                className={`w-full p-3 sm:p-3.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                  hasSpouse
-                    ? "bg-white border-[#C5A880] shadow-sm text-[#1A1A19]"
-                    : "bg-white/60 border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
-                }`}
-              >
-                <div className="min-w-0 flex-1">
-                  <span className="font-sans text-xs font-semibold block text-[#1A1A19]">
-                    Cônjuge / Parceiro(a)
-                  </span>
-                  <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
-                    {hasSpouse ? "Presença confirmada" : "Não levará cônjuge"}
-                  </span>
-                </div>
-                <div
-                  className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
-                    hasSpouse
-                      ? "bg-[#2C3328] border-[#2C3328] text-white"
-                      : "border-[#C5A880]/60 bg-white"
+              <div
+                className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${attendingCeremony
+                  ? "bg-[#2C3328] border-[#2C3328] text-white"
+                  : "border-[#C5A880]/60 bg-white"
                   }`}
-                >
-                  {hasSpouse && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
-                </div>
-              </button>
-
-              {/* Opção Filhos com Contador */}
-              <div className="p-3 sm:p-3.5 rounded-xl bg-white border border-[#E8E2D5] flex items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <span className="font-sans text-xs font-semibold text-[#1A1A19] block">
-                    Filho(s)
-                  </span>
-                  <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
-                    {childrenCount === 0
-                      ? "Nenhum filho acompanhando"
-                      : `${childrenCount} filho(s) confirmado(s)`}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2.5 sm:gap-3 bg-[#F8F6F0] border border-[#E8E2D5] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full shadow-sm shrink-0">
-                  <button
-                    type="button"
-                    disabled={childrenCount <= 0}
-                    onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
-                    className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
-                  >
-                    <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  </button>
-
-                  <span className="font-serif text-sm sm:text-base font-medium text-[#1A1A19] min-w-[18px] text-center">
-                    {childrenCount}
-                  </span>
-
-                  <button
-                    type="button"
-                    disabled={childrenCount >= 10}
-                    onClick={() => setChildrenCount(Math.min(10, childrenCount + 1))}
-                    className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
-                  >
-                    <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  </button>
-                </div>
+              >
+                {attendingCeremony && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
               </div>
+            </button>
 
-              {/* Resumo do Total de Presentes */}
-              <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] sm:text-xs font-sans text-[#2C3328] px-1 gap-1.5">
-                <span className="text-[#7C7C74]">Total de pessoas confirmadas:</span>
-                <span className="font-medium bg-white px-2.5 py-1 rounded-full border border-[#E8E2D5] text-[11px] sm:text-xs">
-                  {totalGuests} {totalGuests === 1 ? "pessoa" : "pessoas"} (você{hasSpouse ? " + cônjuge" : ""}{childrenCount > 0 ? ` + ${childrenCount} filho(s)` : ""})
+            {/* Opção Almoço */}
+            <button
+              type="button"
+              onClick={() => setAttendingLunch(!attendingLunch)}
+              className={`w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${attendingLunch
+                ? "bg-[#F5EFEB] border-[#C5A880] text-[#1A1A19]"
+                : "bg-white border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
+                }`}
+            >
+              <div>
+                <span className="font-serif text-sm font-medium block text-[#1A1A19]">
+                  Almoço na JP Steakhouse
+                </span>
+                <span className="text-[11px] font-sans text-[#7C7C74] block mt-0.5">
+                  12:00h • Almoço por adesão individual
                 </span>
               </div>
-            </div>
-
-            {/* RECADO CARINHOSO AOS NOIVOS */}
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-sans text-[#7C7C74] font-medium">
-                Deixe uma mensagem especial para Jeniffer & Rian (opcional):
-              </label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={2}
-                placeholder="Escreva seus votos aos noivos..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F8F6F0] border border-[#E8E2D5] text-xs font-sans text-[#1A1A19] placeholder:text-[#9E9E96] focus:outline-none focus:border-[#C5A880] focus:bg-white transition-all"
-              />
-            </div>
-
-            {/* BOTÃO DE CONFIRMAÇÃO PRINCIPAL */}
-            <div className="space-y-2 pt-1">
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => handleConfirm(false)}
-                className="w-full py-4 px-6 rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-xs font-semibold tracking-[0.2em] uppercase transition-all cursor-pointer shadow-editorial active:scale-[0.99] flex items-center justify-center gap-2"
+              <div
+                className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${attendingLunch
+                  ? "bg-[#2C3328] border-[#2C3328] text-white"
+                  : "border-[#C5A880]/60 bg-white"
+                  }`}
               >
-                <span>{loading ? "Registrando..." : "CONFIRMAR NOSSA PRESENÇA"}</span>
-                <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
-              </button>
+                {attendingLunch && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
+              </div>
+            </button>
+          </div>
 
-              <div className="text-center pt-1">
+          {/* SELETORES DE CÔNJUGE E FILHOS (RESPOSTA DIRETA DO CONVIDADO) */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F6F0] border border-[#E8E2D5] space-y-3.5 sm:space-y-4">
+            <div>
+              <span className="font-serif text-sm font-medium text-[#1A1A19] block">
+                Acompanhantes da Família
+              </span>
+              <span className="text-[11px] font-sans text-[#7C7C74]">
+                Informe se você virá acompanhado(a) de seu cônjuge e/ou filho(s):
+              </span>
+            </div>
+
+            {/* Opção Cônjuge */}
+            <button
+              type="button"
+              onClick={() => setHasSpouse(!hasSpouse)}
+              className={`w-full p-3 sm:p-3.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${hasSpouse
+                ? "bg-white border-[#C5A880] shadow-sm text-[#1A1A19]"
+                : "bg-white/60 border-[#E8E2D5] text-[#7C7C74] hover:border-[#C5A880]/50"
+                }`}
+            >
+              <div className="min-w-0 flex-1">
+                <span className="font-sans text-xs font-semibold block text-[#1A1A19]">
+                  Cônjuge / Parceiro(a)
+                </span>
+                <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
+                  {hasSpouse ? "Presença confirmada" : "Não levará cônjuge"}
+                </span>
+              </div>
+              <div
+                className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${hasSpouse
+                  ? "bg-[#2C3328] border-[#2C3328] text-white"
+                  : "border-[#C5A880]/60 bg-white"
+                  }`}
+              >
+                {hasSpouse && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
+              </div>
+            </button>
+
+            {/* Opção Filhos com Contador */}
+            <div className="p-3 sm:p-3.5 rounded-xl bg-white border border-[#E8E2D5] flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <span className="font-sans text-xs font-semibold text-[#1A1A19] block">
+                  Filho(s)
+                </span>
+                <span className="text-[10.5px] sm:text-[11px] font-sans text-[#7C7C74] block truncate">
+                  {childrenCount === 0
+                    ? "Nenhum filho acompanhando"
+                    : `${childrenCount} filho(s) confirmado(s)`}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5 sm:gap-3 bg-[#F8F6F0] border border-[#E8E2D5] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full shadow-sm shrink-0">
                 <button
                   type="button"
-                  disabled={loading}
-                  onClick={() => handleConfirm(true)}
-                  className="text-[11px] font-sans text-[#7C7C74] hover:text-[#2C3328] transition-colors cursor-pointer"
+                  disabled={childrenCount <= 0}
+                  onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
+                  className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
                 >
-                  Infelizmente não poderei comparecer
+                  <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
+                </button>
+
+                <span className="font-serif text-sm sm:text-base font-medium text-[#1A1A19] min-w-[18px] text-center">
+                  {childrenCount}
+                </span>
+
+                <button
+                  type="button"
+                  disabled={childrenCount >= 10}
+                  onClick={() => setChildrenCount(Math.min(10, childrenCount + 1))}
+                  className="p-1 min-w-[28px] min-h-[28px] flex items-center justify-center text-[#2C3328] hover:text-[#C5A880] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
                 </button>
               </div>
             </div>
-          </div>
-        )}
-      </div>
 
-      {/* RODAPÉ DO CONVITE */}
-      <footer className="text-center text-[11px] font-sans text-[#9E9E96] space-y-1 mt-6">
-        <p>Jeniffer & Rian • 12 de Dezembro de 2026</p>
-        <p>Ribeirão Preto — São Paulo</p>
-      </footer>
+            {/* Resumo do Total de Presentes */}
+            <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] sm:text-xs font-sans text-[#2C3328] px-1 gap-1.5">
+              <span className="text-[#7C7C74]">Total de pessoas confirmadas:</span>
+              <span className="font-medium bg-white px-2.5 py-1 rounded-full border border-[#E8E2D5] text-[11px] sm:text-xs">
+                {totalGuests} {totalGuests === 1 ? "pessoa" : "pessoas"} (você{hasSpouse ? " + cônjuge" : ""}{childrenCount > 0 ? ` + ${childrenCount} filho(s)` : ""})
+              </span>
+            </div>
+          </div>
+
+          {/* RECADO CARINHOSO AOS NOIVOS */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-sans text-[#7C7C74] font-medium">
+              Deixe uma mensagem especial para Jeniffer & Rian (opcional):
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={2}
+              placeholder="Escreva seus votos aos noivos..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#F8F6F0] border border-[#E8E2D5] text-xs font-sans text-[#1A1A19] placeholder:text-[#9E9E96] focus:outline-none focus:border-[#C5A880] focus:bg-white transition-all"
+            />
+          </div>
+
+          {/* BOTÃO DE CONFIRMAÇÃO PRINCIPAL */}
+          <div className="space-y-2 pt-1">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleConfirm(false)}
+              className="w-full py-4 px-6 rounded-full bg-[#2C3328] hover:bg-[#1E241B] text-white font-sans text-xs font-semibold tracking-[0.2em] uppercase transition-all cursor-pointer shadow-editorial active:scale-[0.99] flex items-center justify-center gap-2"
+            >
+              <span>{loading ? "Registrando..." : "CONFIRMAR NOSSA PRESENÇA"}</span>
+              <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+            </button>
+
+            <div className="text-center pt-1">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => handleConfirm(true)}
+                className="text-[11px] font-sans text-[#7C7C74] hover:text-[#2C3328] transition-colors cursor-pointer"
+              >
+                Infelizmente não poderei comparecer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
+      {/* RODAPÉ DO CONVITE */ }
+  <footer className="text-center text-[11px] font-sans text-[#9E9E96] space-y-1 mt-6">
+    <p>Jeniffer & Rian • 12 de Dezembro de 2026</p>
+    <p>Ribeirão Preto — São Paulo</p>
+  </footer>
+    </div >
   );
 }

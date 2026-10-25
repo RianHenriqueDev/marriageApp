@@ -15,6 +15,8 @@ import {
   Search,
   MessageCircle,
   MessageSquareQuote,
+  Gift,
+  ExternalLink,
 } from "lucide-react";
 import { deleteGuest } from "@/app/admin/actions";
 import { InviteImageModal } from "./InviteImageModal";
@@ -244,6 +246,19 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                 </optgroup>
               </select>
             </div>
+
+            {/* Botão Vaquinha dos Noivos */}
+            <a
+              href="https://www.vakinha.com.br/6411357?utm_campaign=whatsapp&utm_medium=website&utm_content=6411357&utm_source=social-shares"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto justify-center px-3.5 py-2.5 rounded-full bg-canvas-subtle hover:bg-[#F5EFEB] border border-border-hairline text-content-primary text-xs font-sans font-medium hover:border-[#C5A880] transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.98]"
+              title="Acessar página da Vaquinha Online"
+            >
+              <Gift className="w-3.5 h-3.5 text-[#C5A880]" strokeWidth={1.8} />
+              <span>Vaquinha dos Noivos</span>
+              <ExternalLink className="w-3 h-3 text-content-muted" strokeWidth={1.5} />
+            </a>
 
             {/* Botão Novo Convidado */}
             <button
