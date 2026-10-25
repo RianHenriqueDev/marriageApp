@@ -85,23 +85,13 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
     window.open(`https://api.whatsapp.com/send?${phoneParam}text=${text}`, "_blank");
   };
 
-  const openWhatsAppConfirmed = (guest: Guest) => {
-    const attendanceDesc =
-      guest.attendance === AttendanceSelection.BOTH
-        ? "Cerimônia no Cartório e Almoço com a gente"
-        : guest.attendance === AttendanceSelection.ONLY_CEREMONY
-        ? "Cerimônia no Cartório"
-        : "Almoço na JP Steakhouse";
-
-    const peopleDesc =
-      guest.confirmedGuests > 1
-        ? `(${guest.confirmedGuests} pessoas confirmadas)`
-        : "(1 pessoa confirmada)";
-
-    const url = `${window.location.origin}/c/${guest.token}`;
+  const openWhatsAppVakinha = (guest: Guest) => {
+    const vakinhaUrl =
+      "https://www.vakinha.com.br/6411357?utm_campaign=whatsapp&utm_medium=website&utm_content=6411357&utm_source=social-shares";
+    const pixKey = "6411357@vakinha.com.br";
 
     const text = encodeURIComponent(
-      `Olá, ${guest.name}! ❤️\n\nFicamos imensamente felizes com a sua confirmação de presença no nosso casamento! Ter você conosco nesse dia tão especial significa muito para nós.\n\n📍 Momento confirmado: ${attendanceDesc} ${peopleDesc}\n\nSe precisar rever os detalhes, horários e locais, o seu convite está sempre disponível no link:\n${url}\n\nCom muito carinho e ansiosos para comemorar juntos,\nJeniffer & Rian 💍✨`
+      `Olá, ${guest.name}! ❤️\n\nFicamos imensamente felizes com a sua presença confirmada no nosso casamento!\n\nCom a graça de Deus, estamos construindo nosso lar e já temos tudo o que precisamos para começar essa nova fase juntos. Por isso, decidimos não fazer uma lista tradicional de presentes.\n\nMas, para quem deseja nos presentear de coração, criamos este cantinho especial! Aqui, você pode contribuir com qualquer valor e fazer parte dos nossos planos e sonhos. Não existe quantia certa, nem obrigação: o maior presente é compartilhar esse momento com pessoas queridas. Se esse for o seu desejo, receberemos seu carinho com muito amor e gratidão! 🥂\n\n🎁 Link da Vaquinha Online:\n${vakinhaUrl}\n\n🔑 Chave PIX (E-mail):\n${pixKey}\n\nCom todo carinho,\nJeniffer & Rian 💍✨`
     );
     const phoneParam = guest.phone ? `phone=${guest.phone.replace(/\D/g, "")}&` : "";
     window.open(`https://api.whatsapp.com/send?${phoneParam}text=${text}`, "_blank");
@@ -435,27 +425,27 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                             </button>
                           )}
 
-                          {/* WhatsApp: Mensagem especial para Convidado Confirmado */}
-                          {guest.status === RsvpState.CONFIRMED ? (
+                          {/* WhatsApp: Mensagem da Vakinha (Exclusivo para Confirmados) */}
+                          {guest.status === RsvpState.CONFIRMED && (
                             <button
                               type="button"
-                              onClick={() => openWhatsAppConfirmed(guest)}
-                              title="Enviar mensagem de confirmação pelo WhatsApp"
-                              className="p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
+                              onClick={() => openWhatsAppVakinha(guest)}
+                              title="Enviar mensagem da Vaquinha dos Noivos pelo WhatsApp"
+                              className="p-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
                             >
-                              <MessageCircle className="w-4 h-4" />
-                            </button>
-                          ) : (
-                            /* WhatsApp: Envio de Convite Padrão */
-                            <button
-                              type="button"
-                              onClick={() => openWhatsAppBroadcast(guest)}
-                              title="Enviar convite pelo WhatsApp"
-                              className="p-1.5 rounded-full hover:bg-emerald-50 text-content-secondary hover:text-emerald-700 transition-colors cursor-pointer"
-                            >
-                              <MessageCircle className="w-4 h-4" />
+                              <Gift className="w-4 h-4" />
                             </button>
                           )}
+
+                          {/* WhatsApp: Envio de Convite Padrão */}
+                          <button
+                            type="button"
+                            onClick={() => openWhatsAppBroadcast(guest)}
+                            title="Enviar convite pelo WhatsApp"
+                            className="p-1.5 rounded-full hover:bg-emerald-50 text-content-secondary hover:text-emerald-700 transition-colors cursor-pointer"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
 
                           {/* Exportar Imagem */}
                           <button
@@ -614,28 +604,29 @@ export function AdminDashboard({ initialGuests }: AdminDashboardProps) {
                   {/* Barra de Ações Touch-Friendly */}
                   <div className="flex items-center justify-between pt-2.5 border-t border-border-hairline/60 gap-1.5 flex-wrap">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      {/* WhatsApp: Mensagem para Convidado Confirmado ou Convite Padrão */}
-                      {guest.status === RsvpState.CONFIRMED ? (
+                      {/* WhatsApp da Vakinha (Apenas Confirmados) */}
+                      {guest.status === RsvpState.CONFIRMED && (
                         <button
                           type="button"
-                          onClick={() => openWhatsAppConfirmed(guest)}
-                          title="Enviar mensagem de confirmação pelo WhatsApp"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold transition-all shadow-sm cursor-pointer active:scale-95"
+                          onClick={() => openWhatsAppVakinha(guest)}
+                          title="Enviar mensagem da Vaquinha pelo WhatsApp"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-semibold transition-all shadow-sm cursor-pointer active:scale-95"
                         >
-                          <MessageCircle className="w-3.5 h-3.5 text-white" />
-                          <span>Mensagem Confirmação</span>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => openWhatsAppBroadcast(guest)}
-                          title="Enviar convite pelo WhatsApp"
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-medium border border-emerald-200/80 transition-all cursor-pointer active:scale-95"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
-                          <span>WhatsApp</span>
+                          <Gift className="w-3.5 h-3.5 text-white" />
+                          <span>Enviar Vaquinha</span>
                         </button>
                       )}
+
+                      {/* WhatsApp: Convite Padrão */}
+                      <button
+                        type="button"
+                        onClick={() => openWhatsAppBroadcast(guest)}
+                        title="Enviar convite pelo WhatsApp"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-medium border border-emerald-200/80 transition-all cursor-pointer active:scale-95"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Convite</span>
+                      </button>
 
                       {/* Copiar Link */}
                       <button
